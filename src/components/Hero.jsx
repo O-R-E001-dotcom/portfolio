@@ -1,6 +1,6 @@
 import pic2 from "../assets/pic2.jpg";
 import { motion } from "framer-motion";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, View  } from "react-icons/fa";
 
 export default function Hero() {
   return (
@@ -36,6 +36,15 @@ export default function Hero() {
       >
         Contact Me
       </a>
+
+      <a
+            href="https://portfolio-eta-flax-91.vercel.app/Abolore_Sanni's_CV.pdf"
+            view
+            className="flex items-center gap-2 bg-white text-blue-500 px-6 py-3 rounded-lg font-semibold hover:scale-105 hover:text-blue-700 transition"
+          >
+            <View />
+            View CV
+          </a>
 
       <a
             href="/Abolore_Sanni's_CV.pdf"
