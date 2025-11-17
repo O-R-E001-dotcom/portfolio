@@ -8,7 +8,7 @@ export default function Skills() {
   }
 
   return (
-    <section id="skills" className="py-20 px-6 bg-[#1e2a37]">
+    <section id="skills" className="py-20 px-6 bg-[#1e2a37] text-white">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl font-bold mb-12">Skills & Expertise</h2>
         <div className="grid md:grid-cols-3 gap-8">
