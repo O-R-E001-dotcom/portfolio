@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function About() {
   return (
-    <section id="about" className="py-20 px-6 bg-[#213141]">
+    <section id="about" className="py-20 px-6 bg-[#3978b7] border-2 border-blue-400">
       <motion.div
   initial={{ opacity: 0, scale: 0.95 }}
   whileInView={{ opacity: 1, scale: 1 }}
@@ -24,18 +24,18 @@ export default function About() {
               When I'm not coding, you can find me exploring new design trends, contributing to open-source projects, or enjoying the great outdoors.
             </p>
           </div>
-          <div className="bg-[#4f6983] rounded-lg p-8 border-2 border-blue-300 shadow-lg">
+          <div className="bg-[#0e355b] rounded-lg p-8 border-2 border-blue-300 shadow-lg text-white">
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold mb-2">Skills</h3>
-                <p className="text-sm text-black">React, Tailwind, FastAPI, Python, MySQL, JavaScript and more</p>
+                <h3 className="font-semibold mb-2 text-blue-200">Skills</h3>
+                <p className="text-sm text-white">React, Tailwind, FastAPI, Python, MySQL, JavaScript and more</p>
               </div>
               {/* <div>
                 <h3 className="font-semibold mb-2">Experience</h3>
                 <p className="text-sm text-foreground/70">4+ months in web development and design</p>
               </div> */}
               <div>
-                <h3 className="font-semibold mb-2">Location</h3>
+                <h3 className="font-semibold mb-2 text-blue-200">Location</h3>
                 <p className="text-sm text-foreground/70">Available for remote work worldwide</p>
               </div>
             </div>

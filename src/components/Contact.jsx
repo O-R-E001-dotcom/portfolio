@@ -23,7 +23,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-20 px-6 bg-[#213141]">
+    <section id="contact" className="py-20 px-6 bg-[#2a6197]">
       <div className="max-w-2xl mx-auto">
         <h2 className="text-4xl text-white font-bold mb-8 text-center">
           Get In Touch
@@ -54,7 +54,7 @@ export default function Contact() {
                   href="https://wa.me/2349038503017"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-500 text-black font-semibold shadow-lg hover:bg-blue-400 transition-all hover:shadow-white">
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-300 text-black font-semibold shadow-lg hover:bg-blue-400 transition-all hover:shadow-white">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"

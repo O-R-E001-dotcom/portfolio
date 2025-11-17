@@ -41,7 +41,7 @@ export default function Projects() {
   ];
 
   return (
-    <section id="projects" className="py-24 px-6 bg-[#25313e] text-white">
+    <section id="projects" className="py-24 px-6 bg-[#336ca9] text-white">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl font-bold mb-12 text-center">
           Featured Projects
@@ -75,11 +75,11 @@ export default function Projects() {
 
               {/* Content */}
               <div className="p-6">
-                <h3 className="text-2xl font-semibold mb-2 group-hover:text-blue-500 transition-colors">
+                <h3 className="text-2xl font-semibold mb-2 group-hover:text-blue-800 transition-colors">
                   {project.title}
                 </h3>
 
-                <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                <p className="text-gray-800 text-sm leading-relaxed mb-4">
                   {project.description}
                 </p>
 
@@ -88,7 +88,7 @@ export default function Projects() {
                   {project.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1 bg-white text-blue-400 
+                      className="px-3 py-1 bg-white text-blue-600 
                       rounded-full text-xs font-medium border border-blue-500/20"
                     >
                       {tag}
@@ -102,7 +102,7 @@ export default function Projects() {
                     href={project.live}
                     target="_blank"
                     className="inline-flex items-center gap-2 text-sm font-semibold 
-                    text-blue-400 hover:text-green-300 transition-colors"
+                    text-blue-700 hover:text-white transition-colors"
                   >
                     <ExternalLink size={16} /> View Live
                   </a>
@@ -111,7 +111,7 @@ export default function Projects() {
                     href={project.code}
                     target="_blank"
                     className="inline-flex items-center gap-2 text-sm font-semibold 
-                    text-gray-400 hover:text-white transition-colors"
+                    text-gray-700 hover:text-white transition-colors"
                   >
                     <Github size={16} /> Code
                   </a>

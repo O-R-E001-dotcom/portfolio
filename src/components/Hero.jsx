@@ -1,6 +1,6 @@
 import pic2 from "../assets/pic2.jpg";
 import { motion } from "framer-motion";
-import { FaDownload, View  } from "react-icons/fa";
+import { FaDownload, FaRegEye  } from "react-icons/fa";
 
 export default function Hero() {
   return (
@@ -8,7 +8,7 @@ export default function Hero() {
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      viewport={{ once: true }} className="min-h-screen max-sm:flex-wrap flex justify-center items-center bg-[#2C3E50] text-white text-center px-1">
+      viewport={{ once: true }} className="min-h-screen max-sm:flex-wrap flex justify-center items-center bg-[#3576b8] text-white text-center px-1">
       <div className="relative px-5 mt-6">
         <img
           src={pic2}
@@ -39,10 +39,9 @@ export default function Hero() {
 
       <a
             href="https://portfolio-eta-flax-91.vercel.app/Abolore_Sanni's_CV.pdf"
-            view
             className="flex items-center gap-2 bg-white text-blue-500 px-6 py-3 rounded-lg font-semibold hover:scale-105 hover:text-blue-700 transition"
           >
-            <View />
+           <FaRegEye />
             View CV
           </a>
 
