@@ -8,7 +8,7 @@ export default function Hero() {
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      viewport={{ once: true }} className="min-h-screen flex justify-center items-center bg-[#2C3E50] text-white text-center px-1">
+      viewport={{ once: true }} className="min-h-screen max-sm:flex-wrap flex justify-center items-center bg-[#2C3E50] text-white text-center px-1">
       <div className="relative px-5 mt-6">
         <img
           src={pic2}
