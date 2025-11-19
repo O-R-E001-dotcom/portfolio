@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUp } from "lucide-react"; // optional icon library
+import { ArrowUp } from "lucide-react"; 
 
 export default function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);

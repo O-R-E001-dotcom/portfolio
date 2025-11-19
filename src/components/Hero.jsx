@@ -1,6 +1,7 @@
-import pic2 from "../assets/pic2.jpg";
+import pic from "../assets/pic.png";
 import { motion } from "framer-motion";
-import { FaDownload, FaRegEye  } from "react-icons/fa";
+import { TypeAnimation } from "react-type-animation";
+import { FaDownload, FaRegEye } from "react-icons/fa";
 
 export default function Hero() {
   return (
@@ -8,112 +9,90 @@ export default function Hero() {
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      viewport={{ once: true }} className="min-h-screen max-sm:flex-wrap flex justify-center items-center bg-[#3576b8] text-white text-center px-1">
-      <div className="relative px-5 mt-6">
+      viewport={{ once: true }}
+      className="min-h-screen relative flex flex-wrap justify-center items-center text-white text-center px-4 bg-gradient-to-b from-[#1a0033] via-[#2b004d] to-[#130022] overflow-hidden"
+    >
+      {/* === Background Glows === */}
+      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-700/40 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-500/40 blur-[140px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-500/30 blur-[120px] rounded-full pointer-events-none"></div>
+
+      {/* === Image with Floating Effect === */}
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 6, repeat: Infinity }}
+        className="relative z-10 px-5 mt-6"
+      >
         <img
-          src={pic2}
+          src={pic}
           alt="Profile"
-          className="w-80 h-90 object-cover bg-gray-50 rounded-full border-4 border-white"
+          className="w-80 h-90 object-cover rounded-full border-[5px] border-transparent hover:border-purple-500 transition duration-300 shadow-[0_0_40px_rgba(168,85,247,0.6)]"
         />
-      </div>
-      <div>
-        <h1 className="text-5xl font-bold mb-4">Hi, I’m Abolore Sanni</h1>
-      <p className="max-w-xl text-lg mb-6">
-        I’m an AI Developer passionate about blending beautiful UI with solid
-        backend logic.
-      </p>
-      <div className="flex gap-4 mx-auto justify-center ">
-        <a
-        href="#projects"
-        className="bg-white text-blue-500 px-6 py-3 rounded-lg font-semibold hover:scale-105 hover:bg-white hover:text-blue-700 transition-colors"
-      >
-        View My Projects
-      </a>
+      </motion.div>
 
-      <a
-        href="#contact"
-        className="bg-white text-blue-500 px-6 py-3 rounded-lg font-semibold hover:scale-105 hover:bg-white hover:text-blue-700 transition-colors"
-      >
-        Contact Me
-      </a>
+      {/* === Content Card (Glassmorphism) === */}
+      <div className="relative z-10 max-w-xl backdrop-blur-md bg-white/10 p-8 rounded-2xl shadow-lg border border-white/20">
+        <h1 className="text-4xl font-bold mb-2">Hello, I’m <span className="text-purple-400">Abolore Sanni</span> </h1>
 
-      <a
-            href="https://portfolio-eta-flax-91.vercel.app/Abolore_Sanni's_CV.pdf"
-            className="flex items-center gap-2 bg-white text-blue-500 px-6 py-3 rounded-lg font-semibold hover:scale-105 hover:text-blue-700 transition"
+        <TypeAnimation
+          sequence={[
+            "AI Developer",
+            2000,
+            "Full Stack Developer",
+            2000,
+            "Psychologist",
+            2000,
+            "Tech Visionary",
+            2000,
+          ]}
+          wrapper="span"
+          speed={50}
+          repeat={Infinity}
+          className="text-2xl font-semibold text-purple-300 block mb-4"
+        />
+
+        <p className="text-lg opacity-90 mb-6">
+          I build intelligent software solutions that merge strong backend logic with beautiful, user-friendly design.
+        </p>
+
+        {/* Buttons */}
+        <div className="flex flex-wrap gap-4 justify-center">
+          <a
+            href="#projects"
+            className="px-6 py-3 rounded-lg font-semibold border border-white/40
+             hover:bg-purple-500 hover:border-purple-500 hover:text-white transition-all duration-300"
           >
-           <FaRegEye />
+            🚀 View My Projects
+          </a>
+
+          <a
+            href="#contact"
+            className="px-6 py-3 rounded-lg font-semibold border border-white/40
+            hover:bg-blue-500 hover:border-blue-500 hover:text-white transition-all duration-300"
+          >
+            📩 Contact Me
+          </a>
+
+          <a
+            href="https://portfolio-eta-flax-91.vercel.app/Abolore_Sanni's_CV.pdf"
+            className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
+             border border-white/40 hover:bg-green-500 hover:border-green-500 hover:text-white transition-all duration-300"
+          >
+            <FaRegEye />
             View CV
           </a>
 
-      <a
+          <a
             href="/Abolore_Sanni's_CV.pdf"
             download
-            className="flex items-center gap-2 bg-white text-blue-500 px-6 py-3 rounded-lg font-semibold hover:scale-105 hover:text-blue-700 transition"
+            className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
+            border border-white/40 hover:bg-yellow-500 hover:border-yellow-500 hover:text-white transition-all duration-300"
           >
             <FaDownload />
             Download CV
           </a>
-
-      </div>
+        </div>
       </div>
     </motion.div>
   );
 }
-
-// export default function Hero() {
-//   return (
-//     <section
-//       id="home"
-//       className="min-h-screen flex items-center px-6 md:px-20 pt-28 md:pt-0"
-//     >
-//       <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-        
-//         {/* LEFT SIDE */}
-//         <div>
-//           <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4">
-//             Hi, I'm <span className="text-primary">Abolore Sanni</span>
-//           </h1>
-
-//           <h2 className="text-xl md:text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-6">
-//             Fullstack Developer (React + FastAPI)
-//           </h2>
-
-//           <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md leading-relaxed">
-//             I build modern, fast and scalable digital experiences using 
-//             <span className="text-primary font-semibold"> React, Tailwind, Python, FastAPI & MySQL.</span>
-//             Constantly learning, constantly leveling up.
-//           </p>
-
-//           {/* CTA Buttons */}
-//           <div className="flex gap-4">
-//             <a
-//               href="#projects"
-//               className="px-6 py-3 bg-primary text-blue-500 rounded-lg shadow hover:bg-primary/90 transition"
-//             >
-//               View Projects
-//             </a>
-
-//             <a
-//               href="#contact"
-//               className="px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition"
-//             >
-//               Hire Me
-//             </a>
-//           </div>
-//         </div>
-
-//         {/* RIGHT SIDE – IMAGE */}
-//         <div className="flex justify-center">
-//           <div className="w-60 h-60 rounded-full overflow-hidden shadow-xl ring-4 ring-primary/20">
-//             <img
-//               src= {pic2} // <-- replace with your image
-//               alt="Profile"
-//               className="w-full h-full object-cover"
-//             />
-//           </div>
-//         </div>
-
-//       </div>
-//     </section>
-//   );
-// }

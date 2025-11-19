@@ -1,5 +1,6 @@
 import { Mail, MessageSquare, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -7,6 +8,9 @@ export default function Contact() {
     email: "",
     message: "",
   });
+
+const [loading, setLoading] = useState(false);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,14 +20,40 @@ export default function Contact() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    setFormData({ name: "", email: "", message: "" });
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+ setLoading(true);
+
+  if (!formData.name || !formData.email || !formData.message) {
+    setLoading(false)
+  return toast.error("All fields are required!");
+}
+
+  try {
+      const response = await fetch("http://127.0.0.1:8000/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        toast.success("Message Sent!");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        toast.error("Error sending message");
+      }
+    } catch (error) {
+      toast.error("Server error");
+    }
+    setLoading(false);
   };
 
   return (
-    <section id="contact" className="py-20 px-6 bg-[#2a6197]">
+    <section id="contact" className="py-20 px-6 bg-gradient-to-b from-[#1a0033] via-[#2b004d] to-[#130022]">
+      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-700/40 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-500/40 blur-[140px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-500/30 blur-[120px] rounded-full pointer-events-none"></div>
+      
       <div className="max-w-2xl mx-auto">
         <h2 className="text-4xl text-white font-bold mb-8 text-center">
           Get In Touch
@@ -122,10 +152,18 @@ export default function Contact() {
 
           <button
             type="submit"
-            className="w-full bg-blue-400 text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
+            disabled={loading}
+            className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition ${
+              loading
+                ? "bg-gray-500 cursor:pointer"
+                : "bg-blue-500 hover:bg-blue-400"
+            }`}
           >
-            <Send size={20} /> Send Message
+            <Send size={20} />
+            {loading ? "Sending..." : "Send Message"}
           </button>
+
+          <Toaster />
         </form>
       </div>
     </section>
