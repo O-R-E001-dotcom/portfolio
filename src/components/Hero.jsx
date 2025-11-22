@@ -42,7 +42,9 @@ export default function Hero() {
             2000,
             "Psychologist",
             2000,
-            "Tech Visionary",
+            "Tech Enthusiast",
+            2000,
+            "Fashion Entrepreneur",
             2000,
           ]}
           wrapper="span"
