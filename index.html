@@ -7,6 +7,12 @@
     <link href="/src/App.css" rel="stylesheet">
     <title>my-portfolio</title>
   </head>
+  <script>
+  if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.classList.add('dark');
+  }
+</script>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

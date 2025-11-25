@@ -1,52 +1,5 @@
 import ThemeToggle from "./ThemeToggle";
 
-// export default function Navbar() {
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   return (
-//     <nav className="fixed top-0 w-full bg-white shadow-md z-50">
-//       <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-//         <h1 className="text-2xl font-bold text-naija-green">Ore.Dev</h1>
-//         <ul className="hidden md:flex space-x-8">
-//           {["home", "about", "projects", "contact"].map((link) => (
-//             <li key={link}>
-//               <a
-//                 href={`#${link}`}
-//                 className="text-gray-600 hover:text-naija-green capitalize transition"
-//               >
-//                 {link}
-//               </a>
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-          
-//      {/* Mobile Menu Button */}
-//           <button 
-//             onClick={() => setIsOpen(!isOpen)}
-//             className="md:hidden text-gray-700 text-2xl font-bold"
-//           >
-//             {isOpen ? '✕' : '☰'}
-//           </button>
-        
-        
-//         {/* Mobile Menu */}
-//         {isOpen && (
-//           <div className="md:hidden py-4 border-t">
-//             <div className="flex flex-col gap-4">
-//               <a href="#" className="text-gray-700 hover:text-green-600 font-medium">Home</a>
-//               <a href="#" className="text-gray-700 hover:text-green-600 font-medium">Products</a>
-//               <a href="#" className="text-gray-700 hover:text-green-600 font-medium">About</a>
-//               <a href="#" className="text-gray-700 hover:text-green-600 font-medium">Contact</a>
-              
-//             </div>
-//           </div>
-//         )}
-//       <ThemeToggle />
-//     </nav>
-//   );
-// }
-
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -68,14 +21,15 @@ export default function Navbar() {
           <li><a href="#contact" className="hover:text-naija-green transition">Contact</a></li>
         </ul>
 
-        {/* Dark Mode Toggle
+        {/* Dark Mode Toggle */}
         <button
           onClick={() => document.documentElement.classList.toggle("dark")}
-          className="hidden md:block px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          className=" dark:bg-gray-900 dark:text-white "
         >
-          Toggle Theme
-        </button> */}
-
+          <ThemeToggle />
+        </button> 
+        
+        
         {/* Mobile Menu Button */}
         <button
           onClick={() => setOpen(!open)}
@@ -83,7 +37,7 @@ export default function Navbar() {
         >
           {open ? <X size={26} /> : <Menu size={26} />}
         </button>
-         <ThemeToggle />
+        
       </nav>
 
       {/* Mobile Menu */}
@@ -95,18 +49,16 @@ export default function Navbar() {
             <li><a href="#about" onClick={() => setOpen(false)}>About</a></li>
             <li><a href="#contact" onClick={() => setOpen(false)}>Contact</a></li>
             <li>
-              {/* <button
+              <button
                 onClick={() => document.documentElement.classList.toggle("dark")}
                 className="mt-2 px-4 py-2 w-full rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
               >
                 Toggle Theme
-              </button> */}
+              </button>
             </li>
           </ul>
         </div>
       )}
-
-     
     </header>
   );
 }

@@ -25,6 +25,8 @@ function App() {
       {/* <AddCertificate />
       <Certificates />
       <UploadImage /> */}
+
+      
     </div>
   );
 }
