@@ -35,7 +35,7 @@ export default function ScrollToTopButton() {
           exit={{ opacity: 0, y: 40 }}
           transition={{ duration: 0.4 }}
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 bg-naija-green text-white p-3 rounded-full shadow-lg hover:bg-green-700 dark:hover:bg-green-500 transition z-50"
+          className="fixed bottom-6 right-6 bg-green-300 text-white p-3 rounded-full shadow-lg hover:bg-green-700 dark:hover:bg-green-500 transition z-50"
         >
           <ArrowUp size={20} />
         </motion.button>

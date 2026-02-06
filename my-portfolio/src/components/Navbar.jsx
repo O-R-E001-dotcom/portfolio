@@ -10,7 +10,7 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 w-full z-50 bg-white/70 dark:bg-gray-900/70 backdrop-blur-lg shadow-sm border-b border-gray-200 dark:border-gray-700">
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <a href="#hero" className="text-2xl font-extrabold text-naija-green tracking-wide">Abolore Sanni</a>
+        <a href="#hero" className="text-2xl font-extrabold text-white tracking-wide">Abolore Sanni</a>
 
         {/* Desktop Links */}
         <ul className="hidden md:flex items-center gap-8 text-gray-700 dark:text-gray-300 font-medium">

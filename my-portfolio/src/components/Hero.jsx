@@ -13,9 +13,9 @@ export default function Hero() {
       className="min-h-screen relative flex flex-wrap justify-center items-center text-white text-center px-4 bg-gradient-to-b from-[#1a0033] via-[#2b004d] to-[#130022] overflow-hidden"
     >
       {/* === Background Glows === */}
-      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-700/40 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-500/40 blur-[140px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-500/30 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-500/40 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-400/40 blur-[140px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-400/30 blur-[120px] rounded-full pointer-events-none"></div>
 
       {/* === Image with Floating Effect === */}
       <motion.div
