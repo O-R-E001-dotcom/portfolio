@@ -18,6 +18,7 @@ export default function Hero() {
 
   const imageSrc = profile?.profile_image_url || pic;
   const cvUrl = profile?.cv_url || "/Abolore_Sanni's_CV.pdf";
+  const cvDownloadUrl = profile?.cv_url ? `${API_URL}/profile/cv/download` : "/Abolore_Sanni's_CV.pdf";
 
   return (
     <motion.div
@@ -92,6 +93,8 @@ export default function Hero() {
 
           <a
             href={cvUrl}
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
              border border-white/40 hover:bg-green-500 hover:border-green-500 hover:text-white transition-all duration-300"
           >
@@ -100,8 +103,10 @@ export default function Hero() {
           </a>
 
           <a
-            href={cvUrl}
+            href={cvDownloadUrl}
             download
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
             border border-white/40 hover:bg-yellow-500 hover:border-yellow-500 hover:text-white transition-all duration-300"
           >
