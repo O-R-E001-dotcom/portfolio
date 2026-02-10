@@ -346,7 +346,6 @@ export default function AdminPanel() {
       if (cvFile) formData.append('cv', cvFile);
 
 
-
       const res = await fetch(`${API_URL}/profile`, {
 
         method: 'PUT',
@@ -362,7 +361,6 @@ export default function AdminPanel() {
       });
 
 
-
       if (!res.ok) {
 
         const data = await res.json().catch(() => ({}));
@@ -370,7 +368,6 @@ export default function AdminPanel() {
         throw new Error(data.detail || 'Request failed');
 
       }
-
 
 
       const data = await res.json();
@@ -506,7 +503,7 @@ export default function AdminPanel() {
                 <div>
                   <div className="text-sm text-white/70">{skill.category}</div>
                   <div className="font-semibold">{skill.name}</div>
-                  <div className="text-xs text-white/60">{skill.icon_name || 'no icon'} • {skill.proficiency_level}</div>
+                  <div className="text-xs text-white/60">{skill.icon_name || 'no icon'} ï¿½ {skill.proficiency_level}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => openEditSkill(skill)} className="text-sm px-3 py-1 rounded bg-white/10">Edit</button>

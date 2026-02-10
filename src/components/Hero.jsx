@@ -18,6 +18,7 @@ export default function Hero() {
 
   const imageSrc = profile?.profile_image_url || pic;
   const cvUrl = profile?.cv_url || "";
+  const cvViewUrl = profile?.cv_url ? `${API_URL}/profile/cv/view` : "";
   const cvDownloadUrl = profile?.cv_url ? `${API_URL}/profile/cv/download` : "";
 
   return (
@@ -94,7 +95,7 @@ export default function Hero() {
           {cvUrl ? (
             <>
               <a
-                href={cvUrl}
+                href={cvViewUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
