@@ -91,11 +91,16 @@ export default function AdminPanel() {
     { group: 'Backend', items: '' },
     { group: 'Tools', items: '' },
   ]);
-  const [projectImage, setProjectImage] = useState(null);
-
-  const [profile, setProfile] = useState({ profile_image_url: '', cv_url: '' });
-  const [profileImage, setProfileImage] = useState(null);
-  const [cvFile, setCvFile] = useState(null);
+  const [projectImage, setProjectImage] = useState(null);
+
+
+
+  const [profile, setProfile] = useState({ profile_image_url: '', cv_url: '' });
+
+  const [profileImage, setProfileImage] = useState(null);
+
+  const [cvFile, setCvFile] = useState(null);
+
   const [savingProfile, setSavingProfile] = useState(false);
 
   const isAuthed = useMemo(() => Boolean(token), [token]);
@@ -125,11 +130,16 @@ export default function AdminPanel() {
   const fetchProjects = async () => {
     const data = await fetchJSON(`${API_URL}/projects?page=${projectsPage}&page_size=9`);
     setProjects(data);
-  };
-
-  const fetchProfile = async () => {
-    const data = await fetchJSON(`${API_URL}/profile`);
-    setProfile(data || {});
+  };
+
+
+
+  const fetchProfile = async () => {
+
+    const data = await fetchJSON(`${API_URL}/profile`);
+
+    setProfile(data || {});
+
   };
 
   const categoryOptions = useMemo(() => {
@@ -309,43 +319,80 @@ export default function AdminPanel() {
     } catch (e) {
       toast.error(e.message);
     }
-  };
-
-  const submitProfile = async (e) => {
-    e.preventDefault();
-    if (!profileImage && !cvFile) {
-      toast.error('Select a new image or CV first');
-      return;
-    }
-    setSavingProfile(true);
-    try {
-      const formData = new FormData();
-      if (profileImage) formData.append('image', profileImage);
-      if (cvFile) formData.append('cv', cvFile);
-
-      const res = await fetch(`${API_URL}/profile`, {
-        method: 'PUT',
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || 'Request failed');
-      }
-
-      const data = await res.json();
-      setProfile(data || {});
-      setProfileImage(null);
-      setCvFile(null);
-      toast.success('Profile updated');
-    } catch (e) {
-      toast.error(e.message);
-    } finally {
-      setSavingProfile(false);
-    }
+  };
+
+
+
+  const submitProfile = async (e) => {
+
+    e.preventDefault();
+
+    if (!profileImage && !cvFile) {
+
+      toast.error('Select a new image or CV first');
+
+      return;
+
+    }
+
+    setSavingProfile(true);
+
+    try {
+
+      const formData = new FormData();
+
+      if (profileImage) formData.append('image', profileImage);
+
+      if (cvFile) formData.append('cv', cvFile);
+
+
+
+      const res = await fetch(`${API_URL}/profile`, {
+
+        method: 'PUT',
+
+        headers: {
+
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+
+        },
+
+        body: formData,
+
+      });
+
+
+
+      if (!res.ok) {
+
+        const data = await res.json().catch(() => ({}));
+
+        throw new Error(data.detail || 'Request failed');
+
+      }
+
+
+
+      const data = await res.json();
+
+      setProfile(data || {});
+
+      setProfileImage(null);
+
+      setCvFile(null);
+
+      toast.success('Profile updated');
+
+    } catch (e) {
+
+      toast.error(e.message);
+
+    } finally {
+
+      setSavingProfile(false);
+
+    }
+
   };
 
   if (!isAuthed) {
@@ -387,6 +434,58 @@ export default function AdminPanel() {
         <h2 className="text-3xl font-bold">Admin Dashboard</h2>
         <button onClick={logout} className="text-sm text-white/70 hover:text-white">Logout</button>
       </div>
+
+      {/* Profile */}
+      <section className="mb-12">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold">Profile</h3>
+        </div>
+        <form onSubmit={submitProfile} className="bg-[#1b1524] border border-white/10 rounded-lg p-4 space-y-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="w-24 h-24 rounded-full overflow-hidden border border-white/10 bg-white/5">
+              {profile.profile_image_url ? (
+                <img src={profile.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-xs text-white/60">No image</div>
+              )}
+            </div>
+            <div className="text-sm text-white/70">
+              {profile.cv_url ? (
+                <a href={profile.cv_url} className="underline" target="_blank" rel="noreferrer">Current CV</a>
+              ) : (
+                'No CV uploaded'
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm text-white/70">Profile Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setProfileImage(e.target.files?.[0] || null)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-white/70">CV (PDF)</label>
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => setCvFile(e.target.files?.[0] || null)}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-700 disabled:opacity-60"
+            disabled={savingProfile}
+          >
+            {savingProfile ? 'Saving...' : 'Save Profile'}
+          </button>
+        </form>
+      </section>
 
       {/* Skills */}
       <section className="mb-12">
