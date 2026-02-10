@@ -91,7 +91,12 @@ export default function AdminPanel() {
     { group: 'Backend', items: '' },
     { group: 'Tools', items: '' },
   ]);
-  const [projectImage, setProjectImage] = useState(null);
+  const [projectImage, setProjectImage] = useState(null);
+
+  const [profile, setProfile] = useState({ profile_image_url: '', cv_url: '' });
+  const [profileImage, setProfileImage] = useState(null);
+  const [cvFile, setCvFile] = useState(null);
+  const [savingProfile, setSavingProfile] = useState(false);
 
   const isAuthed = useMemo(() => Boolean(token), [token]);
 
@@ -120,6 +125,11 @@ export default function AdminPanel() {
   const fetchProjects = async () => {
     const data = await fetchJSON(`${API_URL}/projects?page=${projectsPage}&page_size=9`);
     setProjects(data);
+  };
+
+  const fetchProfile = async () => {
+    const data = await fetchJSON(`${API_URL}/profile`);
+    setProfile(data || {});
   };
 
   const categoryOptions = useMemo(() => {
@@ -131,6 +141,7 @@ export default function AdminPanel() {
     if (isAuthed) {
       fetchSkills().catch((e) => toast.error(e.message));
       fetchProjects().catch((e) => toast.error(e.message));
+      fetchProfile().catch((e) => toast.error(e.message));
     }
   }, [isAuthed, skillsPage, projectsPage]);
 
@@ -298,6 +309,43 @@ export default function AdminPanel() {
     } catch (e) {
       toast.error(e.message);
     }
+  };
+
+  const submitProfile = async (e) => {
+    e.preventDefault();
+    if (!profileImage && !cvFile) {
+      toast.error('Select a new image or CV first');
+      return;
+    }
+    setSavingProfile(true);
+    try {
+      const formData = new FormData();
+      if (profileImage) formData.append('image', profileImage);
+      if (cvFile) formData.append('cv', cvFile);
+
+      const res = await fetch(`${API_URL}/profile`, {
+        method: 'PUT',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || 'Request failed');
+      }
+
+      const data = await res.json();
+      setProfile(data || {});
+      setProfileImage(null);
+      setCvFile(null);
+      toast.success('Profile updated');
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   if (!isAuthed) {
@@ -572,3 +620,6 @@ export default function AdminPanel() {
     </div>
   );
 }
+
+
+

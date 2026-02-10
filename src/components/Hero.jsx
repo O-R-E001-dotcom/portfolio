@@ -1,9 +1,24 @@
+import { useEffect, useState } from "react";
 import pic from "../assets/pic.png";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 import { FaDownload, FaRegEye } from "react-icons/fa";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 export default function Hero() {
+  const [profile, setProfile] = useState({ profile_image_url: "", cv_url: "" });
+
+  useEffect(() => {
+    fetch(`${API_URL}/profile`)
+      .then((res) => res.json())
+      .then((data) => setProfile(data || {}))
+      .catch(() => {});
+  }, []);
+
+  const imageSrc = profile?.profile_image_url || pic;
+  const cvUrl = profile?.cv_url || "/Abolore_Sanni's_CV.pdf";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -24,7 +39,7 @@ export default function Hero() {
         className="relative z-10 px-5 mt-6"
       >
         <img
-          src={pic}
+          src={imageSrc}
           alt="Profile"
           className="w-80 h-90 object-cover rounded-full border-[5px] border-transparent hover:border-purple-500 transition duration-300 shadow-[0_0_40px_rgba(168,85,247,0.6)]"
         />
@@ -76,7 +91,7 @@ export default function Hero() {
           </a>
 
           <a
-            href="https://portfolio-eta-flax-91.vercel.app/Abolore_Sanni's_CV.pdf"
+            href={cvUrl}
             className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
              border border-white/40 hover:bg-green-500 hover:border-green-500 hover:text-white transition-all duration-300"
           >
@@ -85,7 +100,7 @@ export default function Hero() {
           </a>
 
           <a
-            href="/Abolore_Sanni's_CV.pdf"
+            href={cvUrl}
             download
             className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
             border border-white/40 hover:bg-yellow-500 hover:border-yellow-500 hover:text-white transition-all duration-300"
