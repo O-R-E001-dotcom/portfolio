@@ -159,7 +159,7 @@ export default function AdminPanel() {
     e.preventDefault();
     setLoadingLogin(true);
     try {
-      const res = await fetchJSON(`${API_URL}/auth/login`, {
+      const res = await fetchJSON(`${API_URL.replace(/\/$/, '')}/auth/login`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       });

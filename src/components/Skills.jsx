@@ -81,7 +81,7 @@ export default function Skills() {
                     >
                       <div className="flex items-center gap-3">
                         <div className="text-lg text-white/90">
-                          {Icon ? <Icon /> : <span className="text-white/60">•</span>}
+                          {Icon ? <Icon /> : <span className="text-white/60">ï¿½</span>}
                         </div>
                         <span className="text-foreground text-sm">{skill.name}</span>
                       </div>
