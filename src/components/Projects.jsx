@@ -1,256 +1,250 @@
-import { ExternalLink, Github } from "lucide-react";
-import { motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { ArrowRight, ExternalLink, Github } from "lucide-react";
+import { getProjectPath, normalizeItems, parseTechStack } from "../utils/projectUtils";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const MotionDiv = motion.div;
+const MotionArticle = motion.article;
 
-const parseGroupString = (value) => {
-  const groups = {};
-  const parts = value.split(/\s*[;|\n]\s*/).filter(Boolean);
-  parts.forEach((part) => {
-    const [rawGroup, rawItems] = part.split(":");
-    if (!rawGroup || !rawItems) return;
-    const group = rawGroup.trim();
-    const items = rawItems
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-    if (group && items.length) groups[group] = items;
-  });
-  return Object.keys(groups).length ? groups : null;
+const filters = [
+  { label: "All Work", value: "all" },
+  { label: "Frontend", value: "frontend" },
+  { label: "Backend", value: "backend" },
+  { label: "AI / ML", value: "ai" },
+];
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const parseTechStack = (value) => {
-  if (!value) return null;
-  if (typeof value === "object") return value;
-  try {
-    const obj = JSON.parse(value);
-    if (obj && typeof obj === "object") return obj;
-  } catch {}
-  return parseGroupString(value);
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
-const normalizeItems = (items) => {
-  if (Array.isArray(items)) return items;
-  if (typeof items === "string") {
-    return items
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-  }
-  return [];
+const getProjectSkills = (project) => {
+  const grouped = parseTechStack(project.tech_stack);
+  return Object.values(grouped).flatMap(normalizeItems);
+};
+
+const getProjectCategory = (project) => {
+  const grouped = parseTechStack(project.tech_stack);
+  const firstGroup = Object.keys(grouped)[0];
+  return firstGroup || "Project";
+};
+
+const matchesFilter = (project, filter) => {
+  if (filter === "all") return true;
+
+  const grouped = parseTechStack(project.tech_stack);
+  const haystack = [
+    project.title,
+    project.description,
+    ...Object.keys(grouped),
+    ...Object.values(grouped).flatMap(normalizeItems),
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  return haystack.includes(filter);
 };
 
 export default function Projects() {
+  const [activeFilter, setActiveFilter] = useState("all");
   const [projects, setProjects] = useState([]);
-  const [expanded, setExpanded] = useState(() => new Set());
-  const [paused, setPaused] = useState(false);
-  const scrollerRef = useRef(null);
-  const rafRef = useRef(0);
-  const lastRef = useRef(0);
-
-  const toggleExpanded = (id) => {
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  };
-
-  const truncate = (text, limit = 140) => {
-    if (!text) return "";
-    if (text.length <= limit) return text;
-    return `${text.slice(0, limit)}...`;
-  };
+  const [status, setStatus] = useState("loading");
 
   useEffect(() => {
+    let alive = true;
+
     fetch(`${API_URL}/projects?page=1&page_size=100`)
-      .then((res) => res.json())
-      .then((data) => setProjects(data.items || []))
-      .catch(() => setProjects([]));
+      .then((res) => {
+        if (!res.ok) throw new Error("Unable to load projects");
+        return res.json();
+      })
+      .then((data) => {
+        if (!alive) return;
+        setProjects(data.items || []);
+        setStatus("ready");
+      })
+      .catch(() => {
+        if (!alive) return;
+        setProjects([]);
+        setStatus("error");
+      });
+
+    return () => {
+      alive = false;
+    };
   }, []);
 
-  const cards = useMemo(() => projects, [projects]);
+  const filtered = useMemo(
+    () => projects.filter((project) => matchesFilter(project, activeFilter)),
+    [activeFilter, projects]
+  );
 
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return undefined;
-
-    const speed = 0.08; // pixels per ms (cinematic slow)
-
-    const tick = (ts) => {
-      if (!lastRef.current) lastRef.current = ts;
-      const delta = ts - lastRef.current;
-      lastRef.current = ts;
-
-      if (!paused) {
-        el.scrollLeft += delta * speed;
-        if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 2) {
-          el.scrollLeft = 0;
-        }
-      }
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [paused, cards.length]);
+  const emptyMessage =
+    status === "loading"
+      ? "Loading projects..."
+      : status === "error"
+        ? "Projects are unavailable right now."
+        : "No projects match this filter yet.";
 
   return (
-    <section
-      id="projects"
-      className="relative py-24 px-6 text-white 
-      bg-gradient-to-br from-[#1b1325] via-[#29152f] to-[#1a0f1f]
-      overflow-hidden "
-    >
-      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-700/40 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-500/40 blur-[140px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-500/30 blur-[120px] rounded-full pointer-events-none"></div>
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-purple-700/30 blur-3xl rounded-full animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-60 h-60 bg-fuchsia-500/20 blur-3xl rounded-full animate-ping" />
-      </div>
-
+    <section id="projects" className="py-24 px-6 bg-white dark:bg-gray-950">
       <div className="max-w-6xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: -40 }}
+        <MotionDiv
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="text-5xl font-bold mb-10 text-center tracking-wide"
+          viewport={{ once: true }}
+          className="text-center mb-12"
         >
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-purple-500">
-            Featured Projects
-          </span>
-        </motion.h2>
+          <p className="text-xs font-bold uppercase tracking-widest text-purple-600 mb-4">
+            Portfolio
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-950 dark:text-white mb-4">
+            Selected Works & Product{" "}
+            <span className="text-purple-600">Experiences</span>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-8">
+            A focused collection of projects across web, backend, AI, and full-stack
+            products, built to solve practical problems with clear technical choices.
+          </p>
 
-        <div
-          className="relative overflow-hidden"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocusCapture={() => setPaused(true)}
-          onBlurCapture={() => setPaused(false)}
-        >
-          <div
-            ref={scrollerRef}
-            className="w-full overflow-hidden"
+          <div className="flex flex-wrap justify-center gap-2">
+            {filters.map((filter) => (
+              <button
+                key={filter.value}
+                onClick={() => setActiveFilter(filter.value)}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
+                  activeFilter === filter.value
+                    ? "bg-purple-600 text-white border-purple-600"
+                    : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:text-purple-600"
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </MotionDiv>
+
+        {filtered.length === 0 ? (
+          <div className="text-center text-gray-500 dark:text-gray-400 py-16">
+            {emptyMessage}
+          </div>
+        ) : (
+          <MotionDiv
+            key={activeFilter}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto"
           >
-            <div className="flex gap-10 w-max">
-              {cards.map((project) => {
-                const grouped = parseTechStack(project.tech_stack);
+            <AnimatePresence mode="popLayout">
+              {filtered.map((project) => {
+                const skills = getProjectSkills(project).slice(0, 5);
+                const category = getProjectCategory(project);
+
                 return (
-                  <motion.div
+                  <MotionArticle
                     key={project.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5 }}
-                    className="group bg-white/10 backdrop-blur-xl border border-white/20 
-                rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl 
-                transition-all duration-500 min-w-[320px] max-w-[320px]"
-                    tabIndex={0}
+                    variants={cardVariants}
+                    layout
+                    whileHover={{ y: -8 }}
+                    className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800 group transition-shadow duration-300 hover:shadow-2xl"
                   >
-                    <a href={project.live_url || project.repo_url || "#"} target="_blank">
-                      <div className="relative h-48 overflow-hidden">
+                    <Link to={getProjectPath(project)} className="block">
+                      <div className="h-56 bg-gray-100 dark:bg-gray-800 overflow-hidden">
                         <img
                           src={project.image_url || "/placeholder.svg"}
                           alt={project.title}
-                          className="w-full h-full object-cover 
-                      transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div
-                          className="absolute inset-0 bg-gradient-to-t 
-                    from-black/60 to-transparent opacity-40 
-                    group-hover:opacity-70 transition-opacity"
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>
-                    </a>
-
-                    <div className="p-5">
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-400 transition-colors">
-                        {project.title}
-                      </h3>
-                      <p className="text-white/80 text-sm leading-relaxed">
-                        {expanded.has(project.id)
-                          ? project.description
-                          : truncate(project.description)}
+                    </Link>
+                    <div className="p-6">
+                      <p className="text-xs font-bold uppercase tracking-wider text-purple-600 mb-3">
+                        {category}
                       </p>
-                      {project.description && project.description.length > 140 && (
-                        <button
-                          onClick={() => toggleExpanded(project.id)}
-                          className="mt-2 text-xs text-pink-300 hover:text-pink-200"
-                          type="button"
-                        >
-                          {expanded.has(project.id) ? "Show less" : "Read more"}
-                        </button>
+                      <Link to={getProjectPath(project)} className="block">
+                        <h3 className="text-lg font-bold text-gray-950 dark:text-white mb-3">
+                          {project.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                          {project.description}
+                        </p>
+                      </Link>
+                      {skills.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-5">
+                          {skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300 font-medium"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
                       )}
-
-                      <div className="my-4 space-y-3">
-                        {grouped ? (
-                          Object.entries(grouped).map(([group, items]) => (
-                            <div key={`${project.id}-${group}`}>
-                              <div className="text-xs uppercase tracking-wide text-white/60 mb-2">{group}</div>
-                              <div className="flex flex-wrap gap-2">
-                                {normalizeItems(items).map((tag) => (
-                                  <span
-                                    key={`${project.id}-${group}-${tag}`}
-                                    className="px-3 py-1 bg-white/90 text-black
-                      rounded-full text-xs font-medium shadow-sm"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="flex flex-wrap gap-2">
-                            {(project.tech_stack || "").split(",").filter(Boolean).map((tag) => (
-                              <span
-                                key={`${project.id}-${tag}`}
-                                className="px-3 py-1 bg-white/90 text-black
-                      rounded-full text-xs font-medium shadow-sm"
-                              >
-                                {tag.trim()}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-6">
+                      <div className="flex flex-wrap items-center gap-4 text-sm font-semibold">
+                        <Link
+                          to={getProjectPath(project)}
+                          className="inline-flex items-center gap-2 text-purple-600"
+                        >
+                          View Details
+                          <ArrowRight size={16} />
+                        </Link>
                         {project.live_url && (
                           <a
                             href={project.live_url}
                             target="_blank"
-                            className="inline-flex items-center gap-2 text-sm font-semibold 
-                      hover:text-purple-400 transition-colors"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-gray-500 hover:text-purple-600"
                           >
-                            <ExternalLink size={16} /> Live
+                            <ExternalLink size={15} />
+                            Live
                           </a>
                         )}
-
                         {project.repo_url && (
                           <a
                             href={project.repo_url}
                             target="_blank"
-                            className="inline-flex items-center gap-2 text-sm font-semibold 
-                      hover:text-purple-400 transition-colors"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-gray-500 hover:text-purple-600"
                           >
-                            <Github size={16} /> Code
+                            <Github size={15} />
+                            Code
                           </a>
                         )}
                       </div>
                     </div>
-                  </motion.div>
+                  </MotionArticle>
                 );
               })}
-            </div>
-          </div>
-        </div>
+            </AnimatePresence>
+          </MotionDiv>
+        )}
+
+        {projects.length > 0 && activeFilter !== "all" && (
+          <MotionDiv
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mt-12"
+          >
+            <button
+              onClick={() => setActiveFilter("all")}
+              className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              View All Projects
+              <ArrowRight size={18} />
+            </button>
+          </MotionDiv>
+        )}
       </div>
     </section>
   );

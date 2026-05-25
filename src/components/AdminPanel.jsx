@@ -4,20 +4,20 @@ import toast from 'react-hot-toast';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const PROFICIENCY_OPTIONS = ['Beginner', 'Intermediate', 'Advanced'];
+const defaultCategories = ['Frontend', 'Backend', 'AI', 'Tools', 'Other'];
 
 function Modal({ open, title, onClose, children }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="w-full max-w-2xl rounded-xl bg-[#15101c] border border-white/10 shadow-2xl max-h-[85vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+      <div 
+        className="w-full max-w-2xl rounded-xl bg-[#15101c] border border-white/10 shadow-2xl max-h-[85vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
           <h3 className="text-lg font-semibold text-white">{title}</h3>
-          <button
-            onClick={onClose}
-            className="text-white/70 hover:text-white"
-            type="button"
-          >
-            Close
+          <button onClick={onClose} className="text-white/70 hover:text-white">
+            ✕
           </button>
         </div>
         <div className="px-6 py-5 overflow-y-auto">{children}</div>
@@ -96,13 +96,10 @@ export default function AdminPanel() {
 
 
   const [profile, setProfile] = useState({ profile_image_url: '', cv_url: '' });
-
+  const [profileInputKey, setProfileInputKey] = useState(0);
   const [profileImage, setProfileImage] = useState(null);
-
   const [cvFile, setCvFile] = useState(null);
-
   const [savingProfile, setSavingProfile] = useState(false);
-
   const isAuthed = useMemo(() => Boolean(token), [token]);
 
   const fetchJSON = async (url, options = {}) => {
@@ -125,6 +122,7 @@ export default function AdminPanel() {
   const fetchSkills = async () => {
     const data = await fetchJSON(`${API_URL}/skills?page=${skillsPage}&page_size=12`);
     setSkills(data);
+    setSkillsPage(data.page); //new
   };
 
   const fetchProjects = async () => {
@@ -157,6 +155,7 @@ export default function AdminPanel() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log("API_URL:", API_URL);
     setLoadingLogin(true);
     try {
       const res = await fetchJSON(`${API_URL.replace(/\/$/, '')}/auth/login`, {
@@ -283,7 +282,7 @@ export default function AdminPanel() {
     try {
       const formData = new FormData();
       Object.entries(projectForm).forEach(([k, v]) => {
-        if (v !== '' && v !== null && v !== undefined) formData.append(k, v);
+        if (v != null && v !== '') formData.append(k, v);
       });
       const techStackJson = serializeTechStack(projectStacks);
       if (techStackJson) formData.append('tech_stack', techStackJson);
@@ -326,25 +325,16 @@ export default function AdminPanel() {
   const submitProfile = async (e) => {
 
     e.preventDefault();
-
     if (!profileImage && !cvFile) {
-
       toast.error('Select a new image or CV first');
-
       return;
-
     }
 
     setSavingProfile(true);
-
     try {
-
       const formData = new FormData();
-
       if (profileImage) formData.append('image', profileImage);
-
       if (cvFile) formData.append('cv', cvFile);
-
 
       const res = await fetch(`${API_URL}/profile`, {
 
@@ -373,11 +363,10 @@ export default function AdminPanel() {
       const data = await res.json();
 
       setProfile(data || {});
-
       setProfileImage(null);
-
       setCvFile(null);
-
+      setProfileInputKey(k => k + 1);  // Force remount = clears file input
+      setCvInputKey(k => k + 1); 
       toast.success('Profile updated');
 
     } catch (e) {
@@ -459,16 +448,20 @@ export default function AdminPanel() {
             <div className="space-y-2">
               <label className="text-sm text-white/70">Profile Image</label>
               <input
+                key={`profile-${profileInputKey}`}
                 type="file"
                 accept="image/*"
+                className="text-sm text-white/70 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20"
                 onChange={(e) => setProfileImage(e.target.files?.[0] || null)}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm text-white/70">CV (PDF)</label>
               <input
+                key={`cv-${cvInputKey}`}
                 type="file"
                 accept="application/pdf"
+                className="text-sm text-white/70 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20"
                 onChange={(e) => setCvFile(e.target.files?.[0] || null)}
               />
             </div>
@@ -676,7 +669,7 @@ export default function AdminPanel() {
               </button>
             </div>
             {projectStacks.map((group, index) => (
-              <div key={`${group.group}-${index}`} className="grid md:grid-cols-5 gap-2">
+              <div key={index} className="grid md:grid-cols-5 gap-2">
                 <input
                   className="md:col-span-2 p-3 bg-[#1b1524] border border-white/10 rounded-lg"
                   placeholder="Group name (e.g., UI, API, Infra)"
