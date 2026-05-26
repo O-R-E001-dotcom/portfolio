@@ -97,6 +97,7 @@ export default function AdminPanel() {
 
   const [profile, setProfile] = useState({ profile_image_url: '', cv_url: '' });
   const [profileInputKey, setProfileInputKey] = useState(0);
+  const [cvInputKey, setCvInputKey] = useState(0);
   const [profileImage, setProfileImage] = useState(null);
   const [cvFile, setCvFile] = useState(null);
   const [savingProfile, setSavingProfile] = useState(false);
