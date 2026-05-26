@@ -103,7 +103,7 @@ export default function Projects() {
           className="text-center mb-12"
         >
           <p className="text-xs font-bold uppercase tracking-widest text-purple-600 mb-4">
-            Portfolio
+            Projects
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-950 dark:text-white mb-4">
             Selected Works & Product{" "}
