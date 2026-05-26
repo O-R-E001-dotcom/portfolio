@@ -99,7 +99,7 @@ export default function Hero() {
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
-                 border border-white/40 hover:bg-green-500 hover:border-green-500 hover:text-white transition-all duration-300"
+                 border border-white/40 hover:bg-purple-600 hover:border-purple-700 hover:text-white transition-all duration-300"
               >
                 <FaRegEye />
                 View CV
@@ -111,7 +111,7 @@ export default function Hero() {
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
-                border border-white/40 hover:bg-yellow-500 hover:border-yellow-500 hover:text-white transition-all duration-300"
+                border border-white/40 hover:bg-purple-600 hover:border-purple-700 hover:text-white transition-all duration-300"
               >
                 <FaDownload />
                 Download CV
