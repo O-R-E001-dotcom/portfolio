@@ -10,6 +10,7 @@ import Contact from "./components/Contact";
 import AdminPanel from "./components/AdminPanel";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import PortfolioChatbot from "./components/PortfolioChatbot";
 import ProjectDetail from "./pages/ProjectDetail";
 
 function AnimatedRoutes() {
@@ -30,6 +31,7 @@ function AnimatedRoutes() {
               <section id="contact"><Contact /></section>
               <Footer />
               <ScrollToTopButton />
+              <PortfolioChatbot />
             </>
           }
         />

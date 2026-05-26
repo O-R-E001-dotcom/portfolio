@@ -27,12 +27,12 @@ export default function Hero() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
       viewport={{ once: true }}
-      className="min-h-screen relative flex flex-wrap justify-center items-center text-white text-center px-4 bg-gradient-to-b from-[#1a0033] via-[#2b004d] to-[#130022] overflow-hidden"
+      className="min-h-screen relative flex flex-wrap justify-center items-center text-white text-center px-4 bg-gradient-to-b from-[#080011] via-[#1b0035] to-[#080011] overflow-hidden"
     >
       {/* === Background Glows === */}
-      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-500/40 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-400/40 blur-[140px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-400/30 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-900/45 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-800/40 blur-[140px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-fuchsia-800/30 blur-[120px] rounded-full pointer-events-none"></div>
 
       {/* === Image with Floating Effect === */}
       <motion.div
@@ -43,13 +43,13 @@ export default function Hero() {
         <img
           src={imageSrc}
           alt="Profile"
-          className="w-80 h-90 object-cover rounded-full border-[5px] border-transparent hover:border-purple-500 transition duration-300 shadow-[0_0_40px_rgba(168,85,247,0.6)]"
+          className="w-80 h-90 object-cover rounded-full border-[5px] border-[#351052] hover:border-purple-600 transition duration-300 shadow-[0_0_45px_rgba(88,28,135,0.75)]"
         />
       </motion.div>
 
       {/* === Content Card (Glassmorphism) === */}
-      <div className="relative z-10 max-w-xl backdrop-blur-md bg-white/10 p-8 rounded-2xl shadow-lg border border-white/20">
-        <h1 className="text-4xl font-bold mb-2">Hello, I’m <span className="text-purple-400">Abolore Sanni</span> </h1>
+      <div className="relative z-10 max-w-xl backdrop-blur-md bg-[#140622]/85 p-8 rounded-2xl shadow-2xl border border-purple-950/70">
+        <h1 className="text-4xl font-bold mb-2">Hello, I’m <span className="text-purple-500">Abolore Sanni</span> </h1>
 
         <TypeAnimation
           sequence={[
@@ -79,7 +79,7 @@ export default function Hero() {
           <a
             href="#projects"
             className="px-6 py-3 rounded-lg font-semibold border border-white/40
-             hover:bg-purple-500 hover:border-purple-500 hover:text-white transition-all duration-300"
+             hover:bg-purple-600 hover:border-purple-700 hover:text-white transition-all duration-300"
           >
             🚀 View My Projects
           </a>
@@ -87,7 +87,7 @@ export default function Hero() {
           <a
             href="#contact"
             className="px-6 py-3 rounded-lg font-semibold border border-white/40
-            hover:bg-blue-500 hover:border-blue-500 hover:text-white transition-all duration-300"
+            hover:bg-purple-600 hover:border-purple-700 hover:text-white transition-all duration-300"
           >
             📩 Contact Me
           </a>

@@ -4,18 +4,18 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative py-20 px-6 bg-gradient-to-b from-[#1a0033] via-[#2b004d] to-[#130022] border-2 border-[#480448] overflow-hidden"
+      className="relative py-20 px-6 bg-gradient-to-b from-[#080011] via-[#1b0035] to-[#080011] overflow-hidden"
     >
-      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-700/40 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-500/40 blur-[140px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-500/30 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-900/45 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-800/40 blur-[140px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-fuchsia-800/30 blur-[120px] rounded-full pointer-events-none"></div>
       
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7 }}
-        className="max-w-4xl mx-auto"
+        className="relative z-10 max-w-4xl mx-auto"
       >
       
         <h2 className="text-4xl font-bold mb-8 text-white">About Me</h2>
@@ -38,7 +38,7 @@ export default function About() {
               outdoors.
             </p>
           </div>
-          <div className="bg-[#2b1b42] rounded-lg p-8 border-2 border-[#461443] shadow-lg text-white">
+          <div className="bg-[#140622]/90 rounded-lg p-8 border border-purple-950/70 shadow-2xl text-white">
             <div className="space-y-6">
               <div>
                 <h3 className="font-semibold mb-2 text-blue-200">Skills</h3>

@@ -84,7 +84,7 @@ const [loading, setLoading] = useState(false);
                   href="https://wa.me/2349038503017"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-300 text-black font-semibold shadow-lg hover:bg-blue-400 transition-all hover:shadow-white">
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 text-black font-semibold shadow-lg hover:bg-purple-700 transition-all hover:shadow-white">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -156,7 +156,7 @@ const [loading, setLoading] = useState(false);
             className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition ${
               loading
                 ? "bg-gray-500 cursor:pointer"
-                : "bg-blue-500 hover:bg-blue-400"
+                : "bg-purple-600 hover:bg-purple-700"
             }`}
           >
             <Send size={20} />
