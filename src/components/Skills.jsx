@@ -1,97 +1,207 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 import {
-  FaPython,
-  FaReact,
-  FaDocker,
-  FaDatabase,
-  FaBrain,
-  FaNodeJs,
-  FaFigma,
-  FaGitAlt,
-  FaAws,
-  FaHtml5,
-  FaCss3Alt,
-  FaJsSquare,
-} from 'react-icons/fa';
+  Code2,
+  Cpu,
+  Database,
+  Layers,
+  Network,
+  Server,
+  Wrench,
+} from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-const iconMap = {
-  python: FaPython,
-  react: FaReact,
-  docker: FaDocker,
-  database: FaDatabase,
-  ai: FaBrain,
-  node: FaNodeJs,
-  figma: FaFigma,
-  git: FaGitAlt,
-  aws: FaAws,
-  html: FaHtml5,
-  css: FaCss3Alt,
-  javascript: FaJsSquare,
+const CATEGORY_ORDER = [
+  "AI & Agent Engineering",
+  "RAG & Knowledge Systems",
+  "Machine Learning",
+  "Backend & APIs",
+  "Frontend",
+  "Databases & Cloud",
+  "DevOps",
+  "Languages",
+  "Tools",
+  "AI",
+  "Backend",
+  "Other",
+];
+
+const CATEGORY_ICONS = {
+  "AI & Agent Engineering": Network,
+  "RAG & Knowledge Systems": Database,
+  "Machine Learning": Cpu,
+  "Backend & APIs": Server,
+  Frontend: Code2,
+  "Databases & Cloud": Database,
+  DevOps: Wrench,
+  Languages: Code2,
+  Tools: Wrench,
+  AI: Network,
+  Backend: Server,
 };
 
 export default function Skills() {
-  const categoryOrder = ['Frontend', 'Backend', 'AI', 'Tools'];
   const [skills, setSkills] = useState([]);
+  const [status, setStatus] = useState("loading");
 
   useEffect(() => {
+    let alive = true;
+
     fetch(`${API_URL}/skills?page=1&page_size=100`)
-      .then((res) => res.json())
-      .then((data) => setSkills(data.items || []))
-      .catch(() => setSkills([]));
+      .then((res) => {
+        if (!res.ok) throw new Error("Unable to load skills");
+        return res.json();
+      })
+      .then((data) => {
+        if (!alive) return;
+        setSkills(data.items || []);
+        setStatus("ready");
+      })
+      .catch(() => {
+        if (!alive) return;
+        setSkills([]);
+        setStatus("error");
+      });
+
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const grouped = useMemo(() => {
-    const map = skills.reduce((acc, s) => {
-      acc[s.category] = acc[s.category] || [];
-      acc[s.category].push(s);
+    const map = skills.reduce((acc, skill) => {
+      const category = skill.category || "Other";
+      acc[category] = acc[category] || [];
+      acc[category].push(skill);
       return acc;
     }, {});
 
     const ordered = {};
-    categoryOrder.forEach((cat) => {
-      if (map[cat]) ordered[cat] = map[cat];
+    CATEGORY_ORDER.forEach((category) => {
+      if (map[category]) ordered[category] = map[category];
     });
-    Object.keys(map).forEach((cat) => {
-      if (!ordered[cat]) ordered[cat] = map[cat];
+    Object.keys(map).forEach((category) => {
+      if (!ordered[category]) ordered[category] = map[category];
     });
 
     return ordered;
   }, [skills]);
 
+  const groups = Object.entries(grouped);
+
   return (
-    <section id="skills" className="py-20 px-6 bg-gradient-to-b from-[#1a0033] via-[#2b004d] to-[#130022] text-white">
-      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-700/40 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-500/40 blur-[140px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-500/30 blur-[120px] rounded-full pointer-events-none"></div>
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl font-bold mb-12">Skills & Expertise</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {Object.entries(grouped).map(([category, items]) => (
-            <div key={category} className="bg-[#391c4d] border border-border/50 rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-4 text-primary">{category}</h3>
-              <div className="flex flex-col gap-3">
-                {items.map((skill) => {
-                  const Icon = skill.icon_name ? iconMap[skill.icon_name.toLowerCase()] : null;
-                  return (
-                    <div
-                      key={skill.id}
-                      className="flex items-center justify-between gap-3 bg-[#640e5dcc] px-3 py-2 rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="text-lg text-white/90">
-                          {Icon ? <Icon /> : <span className="text-white/60">�</span>}
-                        </div>
-                        <span className="text-foreground text-sm">{skill.name}</span>
-                      </div>
-                      <span className="text-xs text-white/70">{skill.proficiency_level}</span>
-                    </div>
-                  );
-                })}
+    <section
+      id="skills"
+      aria-labelledby="skills-heading"
+      className="section relative overflow-hidden bg-slate-50 dark:bg-slate-950"
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent dark:from-purple-900/20" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent dark:from-blue-900/20" />
+
+      <div className="relative z-10 mx-auto max-w-5xl">
+        <div className="section-title mb-12 text-center">
+          <h2
+            id="skills-heading"
+            className="mb-3 text-4xl font-extrabold tracking-tight text-foreground md:text-5xl"
+          >
+            Skills &amp; Expertise
+          </h2>
+          <p className="mx-auto max-w-2xl text-lg text-slate-500 dark:text-slate-400">
+            The tools and frameworks I use to design, build, and ship production
+            AI and full-stack systems.
+          </p>
+        </div>
+
+        {status === "loading" && (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+            {[0, 1, 2].map((item) => (
+              <div key={item} className="card animate-pulse p-6">
+                <div className="mb-6 h-5 w-2/3 rounded bg-slate-200 dark:bg-slate-800" />
+                <div className="space-y-3">
+                  <div className="h-8 rounded-lg bg-slate-100 dark:bg-slate-800/70" />
+                  <div className="h-8 rounded-lg bg-slate-100 dark:bg-slate-800/70" />
+                  <div className="h-8 w-4/5 rounded-lg bg-slate-100 dark:bg-slate-800/70" />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        )}
+
+        {status === "error" && (
+          <div className="card mx-auto max-w-xl p-8 text-center">
+            <p className="font-semibold text-foreground">
+              Skills are unavailable right now
+            </p>
+            <p className="mt-2 text-sm text-muted">
+              Please refresh the page, or{" "}
+              <a href="#contact" className="text-brand-600 hover:underline dark:text-brand-400">
+                get in touch
+              </a>{" "}
+              for a full technical breakdown.
+            </p>
+          </div>
+        )}
+
+        {status === "ready" && groups.length === 0 && (
+          <div className="card mx-auto max-w-xl p-8 text-center">
+            <p className="font-semibold text-foreground">No skills listed yet</p>
+            <p className="mt-2 text-sm text-muted">
+              Check back soon, or view the{" "}
+              <a href="#projects" className="text-brand-600 hover:underline dark:text-brand-400">
+                projects
+              </a>{" "}
+              for examples of the work.
+            </p>
+          </div>
+        )}
+
+        {groups.length > 0 && (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {groups.map(([category, items]) => {
+              const Icon = CATEGORY_ICONS[category] || Layers;
+
+              return (
+                <div key={category} className="card p-6">
+                  <div className="mb-5 flex items-start justify-between gap-3">
+                    <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400">
+                        <Icon size={17} />
+                      </span>
+                      {category}
+                    </h3>
+                    <span className="rounded-full border border-brand-500/20 bg-brand-500/10 px-2.5 py-0.5 text-xs font-semibold text-brand-600 dark:text-brand-400">
+                      {items.length}
+                    </span>
+                  </div>
+
+                  <ul className="flex flex-wrap gap-2">
+                    {items.map((skill) => (
+                      <li key={skill.id} className="skill-pill !text-sm">
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 rounded-full bg-brand-500/70"
+                        />
+                        {skill.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="mt-12 text-center">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Want to see these in action?{" "}
+            <a
+              href="#projects"
+              className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
+            >
+              Explore the projects
+            </a>
+            .
+          </p>
         </div>
       </div>
     </section>

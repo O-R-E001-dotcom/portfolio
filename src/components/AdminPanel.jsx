@@ -54,9 +54,20 @@ const serializeTechStack = (groups) => {
   return Object.keys(out).length ? JSON.stringify(out) : '';
 };
 
-export default function AdminPanel() {
-  const defaultCategories = ['Frontend', 'Backend', 'AI', 'Tools', 'Other'];
+const formatMessageDate = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
 
+export default function AdminPanel() {
   const [token, setToken] = useState(localStorage.getItem('admin_token') || '');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -101,7 +112,13 @@ export default function AdminPanel() {
   const [profileImage, setProfileImage] = useState(null);
   const [cvFile, setCvFile] = useState(null);
   const [savingProfile, setSavingProfile] = useState(false);
+
+  const [messages, setMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [openMessageId, setOpenMessageId] = useState(null);
+
   const isAuthed = useMemo(() => Boolean(token), [token]);
+  const unreadCount = messages.filter((message) => !message.is_read).length;
 
   const fetchJSON = async (url, options = {}) => {
     const res = await fetch(url, {
@@ -117,6 +134,7 @@ export default function AdminPanel() {
       const data = await res.json().catch(() => ({}));
       throw new Error(data.detail || 'Request failed');
     }
+    if (res.status === 204) return null;
     return res.json();
   };
 
@@ -141,6 +159,16 @@ export default function AdminPanel() {
 
   };
 
+  const fetchMessages = async () => {
+    setMessagesLoading(true);
+    try {
+      const data = await fetchJSON(`${API_URL}/contact`);
+      setMessages(Array.isArray(data) ? data : []);
+    } finally {
+      setMessagesLoading(false);
+    }
+  };
+
   const categoryOptions = useMemo(() => {
     const fromData = skills.items.map((s) => s.category).filter(Boolean);
     return [...new Set([...defaultCategories, ...fromData])];
@@ -151,7 +179,10 @@ export default function AdminPanel() {
       fetchSkills().catch((e) => toast.error(e.message));
       fetchProjects().catch((e) => toast.error(e.message));
       fetchProfile().catch((e) => toast.error(e.message));
+      fetchMessages().catch((e) => toast.error(e.message));
     }
+    // Fetchers read the current page/token from this render on purpose.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthed, skillsPage, projectsPage]);
 
   const handleLogin = async (e) => {
@@ -316,6 +347,30 @@ export default function AdminPanel() {
       await fetchJSON(`${API_URL}/projects/${projectId}`, { method: 'DELETE' });
       toast.success('Project deleted');
       fetchProjects();
+    } catch (e) {
+      toast.error(e.message);
+    }
+  };
+
+  const toggleMessage = async (message) => {
+    setOpenMessageId((current) => (current === message.id ? null : message.id));
+    if (!message.is_read) {
+      try {
+        const updated = await fetchJSON(`${API_URL}/contact/${message.id}/read`, { method: 'PUT' });
+        setMessages((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
+      } catch (e) {
+        toast.error(e.message);
+      }
+    }
+  };
+
+  const deleteMessage = async (messageId) => {
+    if (!confirm('Delete this message?')) return;
+    try {
+      await fetchJSON(`${API_URL}/contact/${messageId}`, { method: 'DELETE' });
+      setMessages((prev) => prev.filter((m) => m.id !== messageId));
+      setOpenMessageId((current) => (current === messageId ? null : current));
+      toast.success('Message deleted');
     } catch (e) {
       toast.error(e.message);
     }
@@ -497,7 +552,9 @@ export default function AdminPanel() {
                 <div>
                   <div className="text-sm text-white/70">{skill.category}</div>
                   <div className="font-semibold">{skill.name}</div>
-                  <div className="text-xs text-white/60">{skill.icon_name || 'no icon'} � {skill.proficiency_level}</div>
+                  <div className="text-xs text-white/60">
+                    {skill.icon_name || "no icon"} · {skill.proficiency_level}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => openEditSkill(skill)} className="text-sm px-3 py-1 rounded bg-white/10">Edit</button>
@@ -578,6 +635,91 @@ export default function AdminPanel() {
             Next
           </button>
         </div>
+      </section>
+
+      {/* Messages */}
+      <section className="mt-12">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <h3 className="text-xl font-semibold">Messages</h3>
+            {unreadCount > 0 && (
+              <span className="rounded-full bg-pink-600 px-2.5 py-0.5 text-xs font-bold">
+                {unreadCount} new
+              </span>
+            )}
+          </div>
+          <button
+            onClick={() => fetchMessages().catch((e) => toast.error(e.message))}
+            disabled={messagesLoading}
+            className="bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 disabled:opacity-60"
+          >
+            {messagesLoading ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
+
+        {messages.length === 0 ? (
+          <div className="bg-[#1b1524] border border-white/10 rounded-lg p-6 text-sm text-white/60">
+            {messagesLoading ? 'Loading messages...' : 'No messages yet.'}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {messages.map((message) => {
+              const open = openMessageId === message.id;
+              return (
+                <div
+                  key={message.id}
+                  className={`bg-[#1b1524] border rounded-lg ${
+                    message.is_read ? 'border-white/10' : 'border-pink-500/50'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleMessage(message)}
+                    className="flex w-full items-start justify-between gap-4 p-4 text-left"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        {!message.is_read && (
+                          <span className="h-2 w-2 shrink-0 rounded-full bg-pink-500" />
+                        )}
+                        <span className="truncate font-semibold">
+                          {message.subject || 'No subject'}
+                        </span>
+                      </div>
+                      <div className="mt-1 truncate text-xs text-white/60">
+                        {message.name} · {message.email} · {formatMessageDate(message.created_at)}
+                      </div>
+                    </div>
+                    <span className="shrink-0 text-xs text-white/40">
+                      {open ? 'Hide' : 'Read'}
+                    </span>
+                  </button>
+                  {open && (
+                    <div className="border-t border-white/10 p-4">
+                      <p className="whitespace-pre-wrap text-sm text-white/80">{message.message}</p>
+                      <div className="mt-4 flex flex-wrap items-center gap-3">
+                        <a
+                          href={`mailto:${message.email}?subject=${encodeURIComponent(
+                            `Re: ${message.subject || 'Your message'}`
+                          )}`}
+                          className="rounded bg-blue-600 px-3 py-1.5 text-sm hover:bg-blue-700"
+                        >
+                          Reply by email
+                        </a>
+                        <button
+                          onClick={() => deleteMessage(message.id)}
+                          className="rounded bg-red-600/80 px-3 py-1.5 text-sm hover:bg-red-600"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <Modal

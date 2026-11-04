@@ -1,28 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ArrowLeft, ExternalLink, Github, TrendingUp, X } from "lucide-react";
+import { motion as Motion } from "framer-motion";
+import { ArrowLeft, ExternalLink, Github, Layers, X } from "lucide-react";
 import { normalizeItems, parseTechStack } from "../utils/projectUtils";
+import ProjectCover from "../components/ProjectCover";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const MotionDiv = motion.div;
-
-const formatYear = (value) => {
-  if (!value) return "Recent";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "Recent" : date.getFullYear();
-};
+const MotionDiv = Motion.div;
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
-  const [status, setStatus] = useState("loading");
+  const [state, setState] = useState({
+    projectId,
+    status: "loading",
+    project: null,
+  });
+
+  const status = state.projectId === projectId ? state.status : "loading";
+  const project = state.projectId === projectId ? state.project : null;
 
   useEffect(() => {
     window.scrollTo(0, 0);
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = "";
     };
@@ -32,7 +32,6 @@ export default function ProjectDetail() {
     const handleEsc = (event) => {
       if (event.key === "Escape") navigate("/");
     };
-
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [navigate]);
@@ -40,53 +39,68 @@ export default function ProjectDetail() {
   useEffect(() => {
     let alive = true;
 
-    fetch(`${API_URL}/projects?page=1&page_size=100`)
+    fetch(`${API_URL}/projects/${projectId}`)
       .then((res) => {
-        if (!res.ok) throw new Error("Unable to load projects");
+        if (!res.ok) throw new Error("Unable to load project");
         return res.json();
       })
       .then((data) => {
         if (!alive) return;
-        setProjects(data.items || []);
-        setStatus("ready");
+        setState({ projectId, status: "ready", project: data });
       })
       .catch(() => {
         if (!alive) return;
-        setProjects([]);
-        setStatus("error");
+        setState({ projectId, status: "error", project: null });
       });
 
     return () => {
       alive = false;
     };
-  }, []);
+  }, [projectId]);
 
-  const project = useMemo(
-    () => projects.find((item) => String(item.id) === String(projectId)),
-    [projectId, projects]
-  );
+  useEffect(() => {
+    if (!project) return;
 
-  const grouped = parseTechStack(project?.tech_stack);
-  const skills = Object.values(grouped).flatMap(normalizeItems);
+    const previousTitle = document.title;
+    const meta = document.querySelector('meta[name="description"]');
+    const previousDescription = meta?.getAttribute("content");
+    const summary = (project.description || "").replace(/\s+/g, " ").trim();
+
+    document.title = `${project.title} | Abolore Sanni`;
+    if (meta && summary) meta.setAttribute("content", summary.slice(0, 155));
+
+    return () => {
+      document.title = previousTitle;
+      if (meta && previousDescription) meta.setAttribute("content", previousDescription);
+    };
+  }, [project]);
+
+  const grouped = useMemo(() => parseTechStack(project?.tech_stack), [project]);
   const primaryCategory = Object.keys(grouped)[0] || "Project";
 
   if (status === "loading") {
     return (
-      <div className="fixed inset-0 z-[2000] bg-white dark:bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">Loading project...</p>
+      <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-500/20 border-t-brand-500" />
+          <p className="text-sm text-muted">Loading project...</p>
+        </div>
       </div>
     );
   }
 
   if (status === "error" || !project) {
     return (
-      <div className="fixed inset-0 z-[2000] bg-white dark:bg-gray-950 flex items-center justify-center px-6">
+      <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-background px-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-950 dark:text-white mb-4">
+          <h2 className="mb-3 text-2xl font-bold text-foreground">
             Project not found
           </h2>
-          <Link to="/" className="text-purple-600 font-semibold hover:underline">
-            Back to Home
+          <p className="mb-6 text-muted">
+            This project may have been moved or removed.
+          </p>
+          <Link to="/" className="btn btn-primary">
+            <ArrowLeft size={18} /> Back to Portfolio
           </Link>
         </div>
       </div>
@@ -99,146 +113,152 @@ export default function ProjectDetail() {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: "100%", opacity: 0 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
-      className="fixed inset-0 z-[2000] bg-white dark:bg-gray-950 overflow-y-auto"
+      className="fixed inset-0 z-[2000] overflow-y-auto bg-background"
     >
-      <div className="sticky top-0 bg-white/95 dark:bg-gray-950/95 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between z-10">
-        <h2 className="text-lg md:text-xl font-bold text-gray-950 dark:text-white">
-          {project.title}
-        </h2>
-        <button
-          onClick={() => navigate("/")}
-          className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition-all duration-300 hover:rotate-90"
-          aria-label="Close project details"
-        >
-          <X size={18} />
-        </button>
+      <div className="sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
+          <Link
+            to="/#projects"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-brand"
+          >
+            <ArrowLeft size={16} /> All Projects
+          </Link>
+          <button
+            onClick={() => navigate("/")}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition-all hover:rotate-90 hover:bg-card"
+            aria-label="Close project details"
+            type="button"
+          >
+            <X size={18} />
+          </button>
+        </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="mx-auto max-w-5xl px-6 py-10 md:py-14">
         <MotionDiv
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="h-80 md:h-96 bg-gray-100 dark:bg-gray-900 rounded-3xl overflow-hidden mb-10"
+          transition={{ delay: 0.1 }}
+          className="mb-10 overflow-hidden rounded-3xl border border-border bg-card"
         >
-          <img
-            src={project.image_url || "/placeholder.svg"}
-            alt={project.title}
-            className="w-full h-full object-cover"
+          <ProjectCover
+            project={project}
+            category={primaryCategory}
+            className="h-64 w-full md:h-96"
+            imgClassName="h-64 w-full object-cover md:h-96"
           />
         </MotionDiv>
 
         <MotionDiv
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="flex flex-wrap gap-8 mb-10"
-        >
-          <div>
-            <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold block mb-1">
-              Category
-            </span>
-            <span className="font-bold text-gray-950 dark:text-white">{primaryCategory}</span>
-          </div>
-          {skills.length > 0 && (
-            <div>
-              <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold block mb-1">
-                Stack
-              </span>
-              <span className="font-bold text-gray-950 dark:text-white">
-                {skills.slice(0, 4).join(", ")}
-              </span>
-            </div>
-          )}
-          <div>
-            <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold block mb-1">
-              Year
-            </span>
-            <span className="font-bold text-gray-950 dark:text-white">
-              {formatYear(project.created_at)}
-            </span>
-          </div>
-        </MotionDiv>
-
-        <MotionDiv
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
+          transition={{ delay: 0.18 }}
         >
-          <h3 className="text-2xl font-bold text-gray-950 dark:text-white mb-4">Overview</h3>
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-10">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="badge badge-brand">
+              <Layers size={13} /> {primaryCategory}
+            </span>
+          </div>
+          <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
+            {project.title}
+          </h1>
+          <p className="max-w-3xl text-lg leading-relaxed text-muted">
             {project.description}
           </p>
 
-          {Object.keys(grouped).length > 0 && (
-            <>
-              <h3 className="text-2xl font-bold text-gray-950 dark:text-white mb-6">
-                Technical Stack
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                {Object.entries(grouped).map(([group, items]) => (
-                  <div
-                    key={group}
-                    className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-5"
-                  >
-                    <h4 className="font-bold text-purple-600 mb-3">{group}</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {normalizeItems(items).map((item) => (
-                        <span
-                          key={item}
-                          className="text-xs px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300 font-medium"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          <h3 className="text-2xl font-bold text-gray-950 dark:text-white mb-4">
-            Project Access
-          </h3>
-          <div className="bg-purple-50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900 p-6 rounded-2xl mb-10">
-            <p className="font-semibold text-purple-700 dark:text-purple-300 flex items-center gap-2 mb-5">
-              <TrendingUp size={20} />
-              Explore the source, live build, or return to the portfolio.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {project.live_url && (
-                <a
-                  href={project.live_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-lg font-semibold transition"
-                >
-                  <ExternalLink size={18} />
-                  Live Demo
-                </a>
-              )}
-              {project.repo_url && (
-                <a
-                  href={project.repo_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-gray-950 hover:bg-gray-800 text-white px-5 py-3 rounded-lg font-semibold transition"
-                >
-                  <Github size={18} />
-                  Source Code
-                </a>
-              )}
-            </div>
+          <div className="mt-8 flex flex-wrap gap-3">
+            {project.live_url && (
+              <a
+                href={project.live_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
+                <ExternalLink size={18} /> Live Demo
+              </a>
+            )}
+            {project.repo_url && (
+              <a
+                href={project.repo_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline"
+              >
+                <Github size={18} /> Source Code
+              </a>
+            )}
           </div>
 
-          <div className="text-center pb-8">
+          {!project.live_url && !project.repo_url && (
+            <p className="mt-6 max-w-2xl rounded-2xl border border-border bg-card p-4 text-sm text-muted">
+              Source code and a public demo are not available for this build.{" "}
+              <a
+                href="/#contact"
+                className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
+              >
+                Ask about the architecture
+              </a>
+              .
+            </p>
+          )}
+        </MotionDiv>
+
+        <div className="divider my-10" />
+
+        {Object.keys(grouped).length > 0 && (
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.26 }}
+          >
+            <h2 className="mb-6 text-2xl font-bold text-foreground">
+              Technical Stack
+            </h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {Object.entries(grouped).map(([group, items]) => (
+                <div
+                  key={group}
+                  className="rounded-2xl border border-border bg-card p-5"
+                >
+                  <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">
+                    {group}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {normalizeItems(items).map((item) => (
+                      <span key={item} className="skill-pill">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </MotionDiv>
+        )}
+
+        <MotionDiv
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.34 }}
+          className="mt-12 rounded-3xl border border-brand-500/20 bg-brand-500/5 p-8 text-center"
+        >
+          <h3 className="mb-2 text-xl font-bold text-foreground">
+            Interested in working together?
+          </h3>
+          <p className="mx-auto mb-6 max-w-md text-sm text-muted">
+            I build AI agents and full-stack products like this one. Let's talk
+            about your next project.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link to="/#contact" className="btn btn-primary">
+              Get In Touch
+            </Link>
             <button
               onClick={() => navigate("/")}
-              className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
+              className="btn btn-outline"
+              type="button"
             >
-              <ArrowLeft size={18} />
-              Back to Portfolio
+              <ArrowLeft size={18} /> Back to Portfolio
             </button>
           </div>
         </MotionDiv>

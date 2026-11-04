@@ -1,121 +1,124 @@
-import {Github, Linkedin, Mail, MessageCircle, ExternalLink,} from "lucide-react";
+import { Github, Linkedin, Mail, MessageCircle } from "lucide-react";
+
+const quickLinks = [
+  { href: "/#about", label: "About" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#skills", label: "Skills" },
+  { href: "/#credentials", label: "Credentials" },
+  { href: "/#approach", label: "Approach" },
+  { href: "/#contact", label: "Contact" },
+];
+
+const socials = [
+  {
+    href: "https://github.com/O-R-E001-dotcom",
+    label: "GitHub",
+    icon: <Github size={18} />,
+  },
+  {
+    href: "https://www.linkedin.com/in/abolore-sanni-68078b292",
+    label: "LinkedIn",
+    icon: <Linkedin size={18} />,
+  },
+  {
+    href: "mailto:aboloresanni001@gmail.com",
+    label: "Email",
+    icon: <Mail size={18} />,
+  },
+  {
+    href: "https://wa.me/2349038503017",
+    label: "WhatsApp",
+    icon: <MessageCircle size={18} />,
+  },
+];
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-card border-t border-black bg-[#ECF0F1] py-12 px-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <h4 className="font-semibold mb-4">Portfolio</h4>
-            <p className="text-foreground/70 text-sm">
-              Crafting digital experiences with design and code.
+    <footer className="bg-slate-950 text-slate-400 border-t border-slate-800">
+      <div className="max-w-6xl mx-auto px-6 py-14">
+        <div className="grid md:grid-cols-12 gap-10 mb-12">
+          <div className="md:col-span-5">
+            <a
+              href="/#home"
+              className="text-2xl font-extrabold bg-gradient-to-r from-brand-400 to-ai-400 bg-clip-text text-transparent"
+            >
+              Abolore Sanni
+            </a>
+            <p className="mt-4 text-sm leading-relaxed max-w-sm">
+              AI agent developer and full-stack engineer building intelligent,
+              production-ready software. Open to remote opportunities worldwide.
             </p>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
+            <div className="flex gap-3 mt-6">
+              {socials.map((social) => (
                 <a
-                  href="#about"
-                  className="text-foreground/70 hover:text-foreground transition-colors"
+                  key={social.label}
+                  href={social.href}
+                  {...(social.href.startsWith("http")
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                  aria-label={social.label}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-brand-500 hover:bg-brand-500/10 transition-all"
                 >
-                  About
+                  {social.icon}
                 </a>
-              </li>
-              <li>
-                <a
-                  href="#projects"
-                  className="text-foreground/70 hover:text-foreground transition-colors"
-                >
-                  Projects
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#skills"
-                  className="text-foreground/70 hover:text-foreground transition-colors"
-                >
-                  Skills
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#contact"
-                  className="text-foreground/70 hover:text-foreground transition-colors"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Social</h4>
-            <div className="flex gap-4">
-              <a
-                href="https://github.com/O-R-E001-dotcom"
-                className="text-foreground/70 hover:text-primary transition-colors"
-              >
-                <Github size={20} />
-              </a>
-              <a
-                href="www.linkedin.com/in/abolore-sanni-68078b292"
-                className="text-foreground/70 hover:text-primary transition-colors"
-              >
-                <Linkedin size={20} />
-              </a>
-              <a
-                href="mailto:aboloresanni001@gmail.com"
-                className="text-foreground/70 hover:text-primary transition-colors"
-              >
-                <Mail size={20} />
-              </a>
-
-              {/* WhatsApp */}
-              <a
-                href="https://wa.me/2349038503017"
-                className="text-foreground/70 hover:text-primary transition-colors"
-              >
-                <MessageCircle
-                  className="mx-auto mb-3 text-green-500"
-                  size={20}
-                />
-              </a>
+              ))}
             </div>
           </div>
 
-          <div>
-            <h4 className="font-semibold mb-4">Support</h4>
-            <ul className="space-y-2 text-sm">
+          <div className="md:col-span-3 md:col-start-7">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
+              Navigate
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              {quickLinks.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    className="hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="md:col-span-3">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
+              Get In Touch
+            </h4>
+            <ul className="space-y-2.5 text-sm">
               <li>
                 <a
-                  href="#"
-                  className="text-foreground/70 hover:text-foreground transition-colors flex items-center gap-1"
+                  href="mailto:aboloresanni001@gmail.com"
+                  className="hover:text-white transition-colors break-all"
                 >
-                  Privacy <ExternalLink size={14} />
+                  aboloresanni001@gmail.com
                 </a>
               </li>
               <li>
                 <a
-                  href="#"
-                  className="text-foreground/70 hover:text-foreground transition-colors flex items-center gap-1"
+                  href="https://wa.me/2349038503017"
+                  className="hover:text-white transition-colors"
                 >
-                  Terms <ExternalLink size={14} />
+                  +234 903 850 3017
                 </a>
               </li>
+              <li className="text-slate-500">Lagos, Nigeria · Remote-friendly</li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-border/40 pt-8">
-          <p className="text-center text-foreground/60 text-sm">
+        <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-slate-500">
             © {currentYear} Abolore Sanni. All rights reserved.
           </p>
+          <p className="text-sm text-slate-500">
+            Designed and built end to end with React, FastAPI, and AI.
+          </p>
         </div>
-
       </div>
     </footer>
   );

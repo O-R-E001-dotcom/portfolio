@@ -1,20 +1,125 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="/src/App.css" rel="stylesheet">
-    <title>my-portfolio</title>
-  </head>
-  <script>
-  if (localStorage.getItem('theme') === 'dark') {
-    document.documentElement.classList.add('dark');
-  }
-</script>
 
+    <title>Abolore Sanni | AI/Agent Engineer &amp; Full-Stack Developer</title>
+    <meta
+      name="description"
+      content="Abolore Sanni is an AI/Agent Engineer and Full-Stack Developer in Lagos, Nigeria. He builds production agents with LangGraph, LangChain, Azure AI Foundry, and RAG over ChromaDB and Azure AI Search, plus FastAPI, PostgreSQL, React, TypeScript, and Docker."
+    />
+    <meta
+      name="keywords"
+      content="AI/Agent Engineer, full-stack developer, LangGraph, LangChain, Azure AI Foundry, RAG, ChromaDB, FastAPI, React, TypeScript, Python, Lagos Nigeria, portfolio, Abolore Sanni"
+    />
+    <meta name="author" content="Abolore Sanni" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://portfolio-eta-flax-91.vercel.app/" />
+
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#020617" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Abolore Sanni" />
+    <meta property="og:url" content="https://portfolio-eta-flax-91.vercel.app/" />
+    <meta
+      property="og:title"
+      content="Abolore Sanni | AI/Agent Engineer &amp; Full-Stack Developer"
+    />
+    <meta
+      property="og:description"
+      content="AI/Agent Engineer and Full-Stack Developer building production multi-agent systems, RAG pipelines, and full-stack products. Chat with the AI assistant grounded in his CV."
+    />
+    <meta
+      property="og:image"
+      content="https://portfolio-eta-flax-91.vercel.app/og-image.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Abolore Sanni, AI/Agent Engineer and Full-Stack Developer" />
+    <meta property="og:locale" content="en_NG" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Abolore Sanni | AI/Agent Engineer &amp; Full-Stack Developer"
+    />
+    <meta
+      name="twitter:description"
+      content="AI/Agent Engineer and Full-Stack Developer building production multi-agent systems, RAG pipelines, and full-stack products."
+    />
+    <meta
+      name="twitter:image"
+      content="https://portfolio-eta-flax-91.vercel.app/og-image.png"
+    />
+    <meta name="twitter:image:alt" content="Abolore Sanni, AI/Agent Engineer and Full-Stack Developer" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/src/App.css" rel="stylesheet" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Abolore Sanni",
+        "jobTitle": "AI/Agent Engineer & Full-Stack Developer",
+        "url": "https://portfolio-eta-flax-91.vercel.app/",
+        "image": "https://portfolio-eta-flax-91.vercel.app/og-image.png",
+        "email": "mailto:aboloresanni001@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Lagos",
+          "addressCountry": "NG"
+        },
+        "sameAs": [
+          "https://github.com/O-R-E001-dotcom",
+          "https://www.linkedin.com/in/abolore-sanni-68078b292"
+        ],
+        "knowsAbout": [
+          "AI agents",
+          "LangGraph",
+          "LangChain",
+          "Retrieval-augmented generation",
+          "Azure AI Foundry",
+          "FastAPI",
+          "React",
+          "TypeScript",
+          "PostgreSQL",
+          "Docker"
+        ]
+      }
+    </script>
+  </head>
   <body>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (stored === "dark" || (!stored && prefersDark)) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
     <div id="root"></div>
+    <noscript>
+      <p style="padding: 2rem; font-family: system-ui, sans-serif">
+        This portfolio needs JavaScript enabled. You can reach Abolore Sanni at
+        <a href="mailto:aboloresanni001@gmail.com">aboloresanni001@gmail.com</a>.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,12 +1,102 @@
-
 @import "tailwindcss";
 
-@keyframes glowMove {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-48%, -52%) scale(1.1); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+/* Class-based dark mode. Tailwind v4 defaults `dark:` to
+   `prefers-color-scheme`, which ignores the theme toggle. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ===== Design Tokens (Tailwind v4 CSS-first theme) ===== */
+@theme {
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #f0e9ff;
+  --color-brand-200: #e6d7ff;
+  --color-brand-300: #d8b4fe;
+  --color-brand-400: #c084fc;
+  --color-brand-500: #a855f7;
+  --color-brand-600: #9333ea;
+  --color-brand-700: #7e22ce;
+  --color-brand-800: #6b21a8;
+  --color-brand-900: #581c87;
+  --color-brand-950: #3b0764;
+
+  --color-ai-50: #eff6ff;
+  --color-ai-100: #dbeafe;
+  --color-ai-200: #bfdbfe;
+  --color-ai-300: #93c5fd;
+  --color-ai-400: #60a5fa;
+  --color-ai-500: #3b82f6;
+  --color-ai-600: #2563eb;
+  --color-ai-700: #1d4ed8;
+  --color-ai-800: #1e40af;
+  --color-ai-900: #1e3a8a;
+  --color-ai-950: #172554;
+
+  /* Primary shorthand aliases */
+  --color-brand: #9333ea;
+  --color-ai: #3b82f6;
+
+  /* Semantic tokens (overridden in .dark below) */
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+  --color-foreground: #0f172a;
+  --color-background: #ffffff;
+  --color-muted: #64748b;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "Fira Code", monospace;
+
+  --animate-blob: blob 18s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.6s ease-out both;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.dark {
+  --color-card: #0f172a;
+  --color-border: #1e293b;
+  --color-foreground: #f8fafc;
+  --color-background: #020617;
+  --color-muted: #94a3b8;
+}
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+@keyframes glowMove {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-48%, -52%) scale(1.1);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(24px, -30px) scale(1.06);
+  }
+  66% {
+    transform: translate(-18px, 18px) scale(0.96);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

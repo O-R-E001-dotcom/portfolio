@@ -1,45 +1,34 @@
-
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowUp } from "lucide-react"; 
+import { AnimatePresence, motion as Motion } from "framer-motion";
+import { ArrowUp } from "lucide-react";
 
 export default function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
+    const onScroll = () => setVisible(window.scrollY > 400);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
   return (
-    <>
+    <AnimatePresence>
       {visible && (
-        <motion.button
-          initial={{ opacity: 0, y: 40 }}
+        <Motion.button
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 40 }}
-          transition={{ duration: 0.4 }}
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 bg-green-300 text-white p-3 rounded-full shadow-lg hover:bg-green-700 dark:hover:bg-green-500 transition z-50"
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.25 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 left-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-brand-500/30 bg-card text-brand-600 shadow-lg transition-colors hover:border-brand-500 hover:bg-brand hover:text-white dark:text-brand-400"
+          aria-label="Back to top"
+          title="Back to top"
+          type="button"
         >
-          <ArrowUp size={20} />
-        </motion.button>
+          <ArrowUp size={18} />
+        </Motion.button>
       )}
-    </>
+    </AnimatePresence>
   );
 }

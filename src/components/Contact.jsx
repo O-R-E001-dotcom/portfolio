@@ -1,170 +1,361 @@
-import { Mail, MessageSquare, MessageCircle, Send } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Send,
+} from "lucide-react";
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
-export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-const [loading, setLoading] = useState(false);
+const LIMITS = {
+  name: 120,
+  email: 254,
+  subject: 200,
+  message: 5000,
+};
 
+const EMPTY_FORM = { name: "", email: "", subject: "", message: "" };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+function validate(values) {
+  const errors = {};
+  const name = values.name.trim();
+  const email = values.email.trim();
+  const subject = values.subject.trim();
+  const message = values.message.trim();
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
- setLoading(true);
+  if (!name) errors.name = "Please enter your name.";
+  else if (name.length > LIMITS.name)
+    errors.name = `Name must be ${LIMITS.name} characters or fewer.`;
 
-  if (!formData.name || !formData.email || !formData.message) {
-    setLoading(false)
-  return toast.error("All fields are required!");
+  if (!email) errors.email = "Please enter your email address.";
+  else if (email.length > LIMITS.email)
+    errors.email = `Email must be ${LIMITS.email} characters or fewer.`;
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    errors.email = "Enter a valid email address.";
+
+  if (subject.length > LIMITS.subject)
+    errors.subject = `Subject must be ${LIMITS.subject} characters or fewer.`;
+
+  if (!message) errors.message = "Please enter a message.";
+  else if (message.length < 10)
+    errors.message = "Please add a little more detail (at least 10 characters).";
+  else if (message.length > LIMITS.message)
+    errors.message = `Message must be ${LIMITS.message} characters or fewer.`;
+
+  return errors;
 }
 
-  try {
-      const response = await fetch("http://127.0.0.1:8000/send-email", {
+function serverMessage(data) {
+  const detail = data?.detail;
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item) => (typeof item?.msg === "string" ? item.msg : ""))
+      .filter(Boolean);
+    if (messages.length) return messages.join(" ");
+  }
+  return "Could not send your message. Please try again.";
+}
+
+function FieldError({ id, message }) {
+  if (!message) return null;
+  return (
+    <p id={id} role="alert" className="text-xs font-medium text-red-600 dark:text-red-400">
+      {message}
+    </p>
+  );
+}
+
+const contactInfo = [
+  {
+    icon: <Mail size={22} className="text-brand-500" />,
+    title: "Email",
+    value: "aboloresanni001@gmail.com",
+    href: "mailto:aboloresanni001@gmail.com",
+    external: false,
+  },
+  {
+    icon: <MessageCircle size={22} className="text-emerald-500" />,
+    title: "WhatsApp",
+    value: "+234 903 850 3017",
+    href: "https://wa.me/2349038503017",
+    external: true,
+  },
+  {
+    icon: <MapPin size={22} className="text-blue-500" />,
+    title: "Location",
+    value: "Lagos, Nigeria · Remote-friendly",
+    href: null,
+    external: false,
+  },
+];
+
+export default function Contact() {
+  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => {
+      if (!prev[name]) return prev;
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const nextErrors = validate(formData);
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      const firstField = Object.keys(nextErrors)[0];
+      document.getElementById(`contact-${firstField}`)?.focus();
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
+        }),
       });
 
       if (response.ok) {
-        toast.success("Message Sent!");
-        setFormData({ name: "", email: "", message: "" });
+        toast.success("Message sent. I'll get back to you within 24-48 hours.");
+        setFormData(EMPTY_FORM);
+        setErrors({});
       } else {
-        toast.error("Error sending message");
+        const data = await response.json().catch(() => ({}));
+        toast.error(serverMessage(data));
       }
-    } catch (error) {
-      toast.error("Server error");
+    } catch {
+      toast.error(
+        "Could not reach the server. Please try again, or email aboloresanni001@gmail.com."
+      );
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
+  const inputClass = (hasError) =>
+    `w-full rounded-xl border bg-slate-50 px-4 py-3 text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:ring-2 focus:ring-brand/20 dark:bg-slate-800 dark:text-white ${
+      hasError
+        ? "border-red-500 focus:border-red-500"
+        : "border-border focus:border-brand"
+    }`;
+
   return (
-    <section id="contact" className="py-20 px-6 bg-gradient-to-b from-[#1a0033] via-[#2b004d] to-[#130022]">
-      <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-700/40 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-[450px] h-[450px] bg-indigo-500/40 blur-[140px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-pink-500/30 blur-[120px] rounded-full pointer-events-none"></div>
-      
-      <div className="max-w-2xl mx-auto">
-        <h2 className="text-4xl text-white font-bold mb-8 text-center">
-          Get In Touch
-        </h2>
-        <p className="text-white text-center mb-12">
-          Have a project in mind? Let's collaborate and create something amazing
-          together.
-        </p>
+    <section id="contact" aria-labelledby="contact-heading" className="section bg-white dark:bg-slate-950">
+      <div className="mx-auto max-w-5xl">
+        <div className="section-title mb-16 text-center">
+          <h2
+            id="contact-heading"
+            className="mb-3 text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white md:text-5xl"
+          >
+            Get In Touch
+          </h2>
+          <p className="mx-auto max-w-2xl text-lg text-slate-500 dark:text-slate-400">
+            Have a project in mind? Whether you need an AI agent, a full-stack
+            application, or just want to connect, I'd love to hear from you.
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-12 text-white">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-              <Mail className="text-primary" size={24} />
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="space-y-8 lg:col-span-4">
+            <div className="space-y-5">
+              {contactInfo.map((info) => (
+                <div key={info.title} className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-brand/20 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
+                    {info.icon}
+                  </div>
+                  <div>
+                    <h3 className="mb-1 font-bold text-slate-900 dark:text-white">
+                      {info.title}
+                    </h3>
+                    {info.href ? (
+                      <a
+                        href={info.href}
+                        {...(info.external
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        className="text-slate-600 transition-colors hover:text-brand dark:text-slate-400"
+                      >
+                        {info.value}
+                      </a>
+                    ) : (
+                      <p className="text-slate-600 dark:text-slate-400">
+                        {info.value}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-            <div>
-              <h3 className="font-semibold mb-1">Email</h3>
-              <p className="text-foreground/70 text-sm">
-                aboloresanni001@gmail.com
+
+            <div className="rounded-3xl border border-border bg-slate-50 p-6 dark:bg-slate-900">
+              <h3 className="mb-4 font-bold text-slate-900 dark:text-white">
+                Let's build something
+              </h3>
+              <p className="mb-6 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                I typically respond within 24-48 hours. Share your project
+                details, timeline, and any questions you have.
               </p>
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center gap-4">
-              <div>
-                <h3 className="font-semibold mb-1">WhatsApp</h3>
+              <div className="flex gap-3">
                 <a
-                  href="https://wa.me/2349038503017"
+                  href="https://github.com/O-R-E001-dotcom"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 text-black font-semibold shadow-lg hover:bg-purple-700 transition-all hover:shadow-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    className="w-5 h-5"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M20.52 3.48A11.84 11.84 0 0 0 12 .63a11.92 11.92 0 0 0-10.3 17.9L.17 23.3a1 1 0 0 0 .27 1A1 1 0 0 0 1.8 24l4.94-1.55A12 12 0 1 0 20.52 3.5ZM12 21.5a9.5 9.5 0 1 1 9.5-9.5 9.52 9.52 0 0 1-9.5 9.5Zm5-7.12c-.27-.13-1.63-.8-1.88-.89s-.44-.14-.62.14-.72.89-.88 1.08-.32.2-.6.07a7.76 7.76 0 0 1-3.82-3.35c-.29-.5.29-.46.83-1.54a.53.53 0 0 0 0-.5c-.07-.14-.62-1.48-.85-2-.22-.53-.45-.45-.62-.45h-.53a1 1 0 0 0-.72.34A3 3 0 0 0 6.6 9.3c0 .65.47 1.28.54 1.37s1 1.53 2.42 2.66 2.74 1.74 3.2 1.94a2.85 2.85 0 0 0 1.32.4 2.3 2.3 0 0 0 1.51-.66 1.93 1.93 0 0 0 .43-1.07c.06-.2.06-.37 0-.5s-.24-.14-.5-.27Z" />
-                  </svg>
-                  Chat on WhatsApp
+                  className="btn-icon"
+                  aria-label="GitHub profile"
+                >
+                  <Github size={20} />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/abolore-sanni-68078b292"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-icon"
+                  aria-label="LinkedIn profile"
+                >
+                  <Linkedin size={20} />
+                </a>
+                <a
+                  href="mailto:aboloresanni001@gmail.com"
+                  className="btn-icon"
+                  aria-label="Send an email"
+                >
+                  <Mail size={20} />
                 </a>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
-              <MessageSquare className="text-accent" size={24} />
-            </div>
-            <div>
-              <h3 className="font-semibold mb-1">Message</h3>
-              <p className="text-foreground/70 text-sm">Always happy to chat</p>
+          <div className="lg:col-span-8">
+            <div className="card p-8 shadow-xl lg:p-12">
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="contact-name"
+                      className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                    >
+                      Full Name
+                    </label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Jane Doe"
+                      autoComplete="name"
+                      maxLength={LIMITS.name}
+                      required
+                      aria-invalid={Boolean(errors.name)}
+                      aria-describedby={errors.name ? "contact-name-error" : undefined}
+                      className={inputClass(Boolean(errors.name))}
+                    />
+                    <FieldError id="contact-name-error" message={errors.name} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="contact-email"
+                      className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                    >
+                      Email Address
+                    </label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                      maxLength={LIMITS.email}
+                      required
+                      aria-invalid={Boolean(errors.email)}
+                      aria-describedby={errors.email ? "contact-email-error" : undefined}
+                      className={inputClass(Boolean(errors.email))}
+                    />
+                    <FieldError id="contact-email-error" message={errors.email} />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="contact-subject"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  >
+                    Subject <span className="font-normal text-slate-400">(optional)</span>
+                  </label>
+                  <input
+                    id="contact-subject"
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    placeholder="Project inquiry / Collaboration"
+                    maxLength={LIMITS.subject}
+                    aria-invalid={Boolean(errors.subject)}
+                    aria-describedby={errors.subject ? "contact-subject-error" : undefined}
+                    className={inputClass(Boolean(errors.subject))}
+                  />
+                  <FieldError id="contact-subject-error" message={errors.subject} />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="contact-message"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="Tell me about your project, the problem you're solving, and your timeline..."
+                    rows="6"
+                    maxLength={LIMITS.message}
+                    required
+                    aria-invalid={Boolean(errors.message)}
+                    aria-describedby={errors.message ? "contact-message-error" : undefined}
+                    className={`${inputClass(Boolean(errors.message))} resize-none`}
+                  />
+                  <FieldError id="contact-message-error" message={errors.message} />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn btn-primary flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  <Send size={18} className="mr-2" />
+                  {loading ? "Sending..." : "Send Message"}
+                </button>
+              </form>
             </div>
           </div>
         </div>
-
-        <form
-          onSubmit={handleSubmit}
-          className="bg-card border border-blue-100 rounded-lg p-8 text-white"
-        >
-          <div className="mb-6">
-            <label className="block text-sm font-medium mb-2">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:border-blue-400 focus:ring-3 transition-colors"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-sm font-medium mb-2">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:border-blue-400 focus:ring-3 transition-colors"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-sm font-medium mb-2">Message</label>
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              rows="5"
-              className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:border-blue-400 focus:ring-3 transition-colors resize-none"
-              required
-            ></textarea>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition ${
-              loading
-                ? "bg-gray-500 cursor:pointer"
-                : "bg-purple-600 hover:bg-purple-700"
-            }`}
-          >
-            <Send size={20} />
-            {loading ? "Sending..." : "Send Message"}
-          </button>
-
-          <Toaster />
-        </form>
       </div>
     </section>
   );
