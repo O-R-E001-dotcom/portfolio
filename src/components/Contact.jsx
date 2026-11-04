@@ -263,7 +263,7 @@ export default function Contact() {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Jane Doe"
+                      placeholder="Jane Charles"
                       autoComplete="name"
                       maxLength={LIMITS.name}
                       required
