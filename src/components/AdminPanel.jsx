@@ -4,6 +4,16 @@ import toast from 'react-hot-toast';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const PROFICIENCY_OPTIONS = ['Beginner', 'Intermediate', 'Advanced'];
+const LEGACY_CATEGORY_ALIASES = {
+  AI: 'AI & Agent Engineering',
+  Backend: 'Backend & APIs',
+};
+
+const normalizeCategory = (category) => {
+  const value = (category || '').trim();
+  return LEGACY_CATEGORY_ALIASES[value] || value;
+};
+
 const defaultCategories = [
   'AI & Agent Engineering',
   'RAG & Knowledge Systems',
@@ -181,7 +191,9 @@ export default function AdminPanel() {
   };
 
   const categoryOptions = useMemo(() => {
-    const fromData = skills.items.map((s) => s.category).filter(Boolean);
+    const fromData = skills.items
+      .map((s) => normalizeCategory(s.category))
+      .filter(Boolean);
     return [...new Set([...defaultCategories, ...fromData])];
   }, [skills.items]);
 
@@ -232,7 +244,7 @@ export default function AdminPanel() {
   const openEditSkill = (skill) => {
     setEditingSkill(skill);
     setSkillForm({
-      category: skill.category,
+      category: normalizeCategory(skill.category),
       name: skill.name,
       icon_name: skill.icon_name || '',
       proficiency_level: skill.proficiency_level || 'Intermediate',
