@@ -4,18 +4,23 @@ import { motion as Motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 import { FaDownload, FaRegEye, FaCode } from "react-icons/fa";
 import { LayersIcon } from "./icons";
+import { readCache, writeCache } from "../utils/apiCache";
+import { fetchJsonWithRetry } from "../utils/api";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function Hero() {
-  const [profile, setProfile] = useState({ profile_image_url: "", cv_url: "" });
+  const [profile, setProfile] = useState(
+    () => readCache("profile") || { profile_image_url: "", cv_url: "" }
+  );
 
   useEffect(() => {
     let alive = true;
-    fetch(`${API_URL}/profile`)
-      .then((res) => res.json())
+    fetchJsonWithRetry(`${API_URL}/profile`)
       .then((data) => {
-        if (alive) setProfile(data || {});
+        if (!alive) return;
+        setProfile(data || {});
+        writeCache("profile", data || {});
       })
       .catch(() => {});
     return () => {
@@ -49,11 +54,11 @@ export default function Hero() {
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-indigo-900/25 blur-[160px] rounded-full pointer-events-none animate-blob" style={{ animationDelay: "-2s" }}></div>
       <div className="absolute top-40 right-10 w-[400px] h-[400px] bg-pink-900/20 blur-[140px] rounded-full pointer-events-none animate-blob" style={{ animationDelay: "-4s" }}></div>
 
-      {/* === Floating Decorative Elements === */}
-      <div className="absolute top-1/4 left-8 w-12 h-12 rounded-full border border-white/10 flex items-center justify-center animate-pulse">
+      {/* === Floating Decorative Elements (desktop only) === */}
+      <div className="absolute top-1/4 left-8 hidden h-12 w-12 items-center justify-center rounded-full border border-white/10 animate-pulse md:flex">
         <FaCode size={24} className="text-purple-400" />
       </div>
-      <div className="absolute top-1/3 right-8 w-10 h-10 rounded-full border border-white/10 flex items-center justify-center animate-pulse" style={{ animationDelay: "1s" }}>
+      <div className="absolute top-1/3 right-8 hidden h-10 w-10 items-center justify-center rounded-full border border-white/10 animate-pulse md:flex" style={{ animationDelay: "1s" }}>
         <LayersIcon size={22} className="text-blue-400" />
       </div>
 
@@ -73,7 +78,7 @@ export default function Hero() {
           />
         </Motion.div>
 
-        <div className="mt-8 animate-fade-in">
+        <div className="mt-12 sm:mt-8 animate-fade-in">
           <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 leading-tight break-words bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-300 to-blue-300">
             Hello, I’m <span className="text-purple-400">Abolore Sanni</span>
           </h1>
@@ -95,14 +100,14 @@ export default function Hero() {
             className="text-lg md:text-2xl font-semibold text-slate-300 block mb-6 min-h-[1.75rem]"
           />
 
-          <p className="text-base sm:text-lg md:text-xl text-slate-400 mb-8 max-w-lg w-full mx-auto leading-relaxed px-2">
+          <p className="text-base sm:text-lg md:text-xl text-slate-400 mb-10 max-w-lg w-full mx-auto leading-relaxed px-2">
             I build intelligent, production-ready software — combining AI
             agents, full-stack engineering, and a psychology-informed approach
             to human-centered design.
           </p>
 
           {/* === Action Buttons === */}
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 w-full max-w-lg mx-auto">
             <a
               href="#projects"
               className="btn btn-primary group relative overflow-hidden"

@@ -137,20 +137,20 @@ input, textarea, select {
   overflow: hidden;
 }
 
+/* Section headings intentionally rely on spacing utilities (mb-*) in the
+   components. Do not set margins here: this file is unlayered, so those
+   declarations would override Tailwind's layered utilities and collapse the
+   spacing between headings and content. */
 .section-title {
   text-align: center;
-  margin-bottom: 1rem;
 }
 
 .section-title h2 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  margin-bottom: 0.75rem;
   letter-spacing: -0.02em;
 }
 
 .section-title p {
   color: var(--color-text-secondary);
-  font-size: 1.125rem;
   max-width: 42rem;
   margin: 0 auto;
 }

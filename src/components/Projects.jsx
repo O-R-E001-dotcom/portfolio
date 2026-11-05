@@ -16,6 +16,8 @@ import {
   parseTechStack,
   sortProjects,
 } from "../utils/projectUtils";
+import { readCache, writeCache } from "../utils/apiCache";
+import { fetchJsonWithRetry } from "../utils/api";
 import ProjectCover from "./ProjectCover";
 import { NetworkIcon } from "./icons";
 
@@ -151,27 +153,31 @@ const matchesFilter = (project, filter) => {
 
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState("all");
-  const [projects, setProjects] = useState([]);
-  const [status, setStatus] = useState("loading");
+  const [projects, setProjects] = useState(() => {
+    const cached = readCache("projects");
+    return cached ? sortProjects(cached) : [];
+  });
+  const [status, setStatus] = useState(() =>
+    readCache("projects") ? "ready" : "loading"
+  );
   const [viewMode, setViewMode] = useState("grid");
 
   useEffect(() => {
     let alive = true;
 
-    fetch(`${API_URL}/projects?page=1&page_size=100`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Unable to load projects");
-        return res.json();
-      })
+    fetchJsonWithRetry(`${API_URL}/projects?page=1&page_size=100`)
       .then((data) => {
         if (!alive) return;
-        setProjects(sortProjects(data.items || []));
+        const items = data.items || [];
+        setProjects(sortProjects(items));
         setStatus("ready");
+        writeCache("projects", items);
       })
       .catch(() => {
         if (!alive) return;
-        setProjects([]);
-        setStatus("error");
+        // Keep cached content visible if a revalidation fails.
+        setProjects((current) => (current.length > 0 ? current : []));
+        setStatus((current) => (current === "ready" ? current : "error"));
       });
 
     return () => {

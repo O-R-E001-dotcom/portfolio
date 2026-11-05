@@ -8,6 +8,8 @@ import {
   Server,
   Wrench,
 } from "lucide-react";
+import { readCache, writeCache } from "../utils/apiCache";
+import { fetchJsonWithRetry } from "../utils/api";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -41,26 +43,26 @@ const CATEGORY_ICONS = {
 };
 
 export default function Skills() {
-  const [skills, setSkills] = useState([]);
-  const [status, setStatus] = useState("loading");
+  const [skills, setSkills] = useState(() => readCache("skills") || []);
+  const [status, setStatus] = useState(() =>
+    readCache("skills") ? "ready" : "loading"
+  );
 
   useEffect(() => {
     let alive = true;
 
-    fetch(`${API_URL}/skills?page=1&page_size=100`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Unable to load skills");
-        return res.json();
-      })
+    fetchJsonWithRetry(`${API_URL}/skills?page=1&page_size=100`)
       .then((data) => {
         if (!alive) return;
-        setSkills(data.items || []);
+        const items = data.items || [];
+        setSkills(items);
         setStatus("ready");
+        writeCache("skills", items);
       })
       .catch(() => {
         if (!alive) return;
-        setSkills([]);
-        setStatus("error");
+        setSkills((current) => (current.length > 0 ? current : []));
+        setStatus((current) => (current === "ready" ? current : "error"));
       });
 
     return () => {

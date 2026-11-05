@@ -53,7 +53,7 @@ export default function Approach() {
           </p>
         </Motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid gap-6 sm:gap-8 md:grid-cols-3">
           {pillars.map((pillar, i) => (
             <Motion.div
               key={pillar.title}
