@@ -33,8 +33,13 @@ export default function PortfolioChatbot() {
   const bodyRef = useRef(null);
   const inputRef = useRef(null);
   const toggleRef = useRef(null);
+  const abortRef = useRef(null);
   const hasUserMessage = messages.some((message) => message.role === "user");
   const status = AVAILABILITY[availability] || AVAILABILITY.checking;
+  const lastMessage = messages[messages.length - 1];
+  const isStreaming =
+    loading && lastMessage?.role === "assistant" && lastMessage.text.length > 0;
+  const showTyping = loading && !isStreaming;
 
   // Check once on load so the header never claims the assistant is online
   // when the service is down or misconfigured.
@@ -100,12 +105,15 @@ export default function PortfolioChatbot() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Stop an in-flight stream if the widget is removed from the page.
+  useEffect(() => () => abortRef.current?.abort(), []);
+
   const sendQuestion = async (rawQuestion) => {
     const cleanQuestion = rawQuestion.trim();
     if (!cleanQuestion || loading) return;
 
     const history = messages
-      .filter((message) => message !== greeting)
+      .filter((message) => message !== greeting && message.text)
       .slice(-6)
       .map((message) => ({ role: message.role, content: message.text }));
 
@@ -113,31 +121,77 @@ export default function PortfolioChatbot() {
     setLoading(true);
     setMessages((prev) => [...prev, { role: "user", text: cleanQuestion }]);
 
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    let answer = "";
+    let started = false;
+
+    // Append the assistant bubble on the first token, then grow it in place.
+    const renderAnswer = (text) => {
+      answer = text;
+      if (!started) {
+        started = true;
+        setMessages((prev) => [...prev, { role: "assistant", text }]);
+        return;
+      }
+      setMessages((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = { role: "assistant", text };
+        return next;
+      });
+    };
+
+    const failAnswer = () => {
+      const fallback =
+        "I couldn't reach the CV assistant right now. Please try again shortly, or contact Abolore directly at aboloresanni001@gmail.com.";
+      if (started) {
+        renderAnswer(answer.trim() || fallback);
+      } else {
+        started = true;
+        setMessages((prev) => [...prev, { role: "assistant", text: fallback }]);
+      }
+    };
+
     try {
-      const response = await fetch(`${CHATBOT_API_URL}/chat`, {
+      const response = await fetch(`${CHATBOT_API_URL}/chat/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: cleanQuestion, history }),
+        signal: controller.signal,
       });
 
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.detail || "Chatbot request failed");
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.detail || "Chatbot request failed");
+      }
 
+      // Fallback for browsers/proxies that do not expose a readable body.
+      if (!response.body) {
+        renderAnswer(await response.text());
+        setAvailability("online");
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        answer += decoder.decode(value, { stream: true });
+        if (answer) renderAnswer(answer);
+      }
+
+      answer += decoder.decode();
+      renderAnswer(answer.trim() || "I don't have that detail.");
       setAvailability("online");
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: data.answer || "I don't have that detail." },
-      ]);
-    } catch {
+    } catch (error) {
+      if (error?.name === "AbortError") return;
       setAvailability("offline");
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          text: "I couldn't reach the CV assistant right now. Please try again shortly, or contact Abolore directly at aboloresanni001@gmail.com.",
-        },
-      ]);
+      failAnswer();
     } finally {
+      abortRef.current = null;
       setLoading(false);
     }
   };
@@ -148,12 +202,12 @@ export default function PortfolioChatbot() {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-[1500]">
+    <div className="fixed bottom-3 right-3 z-[1500] sm:bottom-5 sm:right-5">
       {open && (
         <div
           role="dialog"
           aria-label="AI assistant chat"
-          className="mb-4 flex h-[min(74vh,620px)] w-[min(92vw,390px)] flex-col overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl"
+          className="mb-3 flex h-[min(78dvh,620px)] max-h-[calc(100dvh-6rem)] w-[calc(100vw-1.5rem)] max-w-[390px] flex-col overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl sm:mb-4 sm:w-[390px]"
         >
           {/* Header */}
           <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-gradient-to-r from-brand-600 to-ai-600 px-4 py-3 text-white">
@@ -183,33 +237,43 @@ export default function PortfolioChatbot() {
           {/* Messages */}
           <div
             ref={bodyRef}
-            className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-background px-3 py-4 sm:px-4"
+            className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-background px-3 py-4 sm:px-4"
           >
-            {messages.map((message, index) => (
-              <div
-                key={`${message.role}-${index}`}
-                className={`flex items-start gap-2 ${
-                  message.role === "user" ? "flex-row-reverse" : ""
-                }`}
-              >
-                {message.role === "assistant" && (
-                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400">
-                    <UserRoundIcon size={15} />
-                  </div>
-                )}
+            {messages.map((message, index) => {
+              const streamingHere =
+                loading && index === messages.length - 1 && message.role === "assistant";
+              return (
                 <div
-                  className={`max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                    message.role === "user"
-                      ? "rounded-br-md bg-brand-600 text-white"
-                      : "rounded-bl-md border border-border bg-card text-foreground"
+                  key={`${message.role}-${index}`}
+                  className={`flex items-start gap-2 ${
+                    message.role === "user" ? "flex-row-reverse" : ""
                   }`}
                 >
-                  {message.text}
+                  {message.role === "assistant" && (
+                    <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400">
+                      <UserRoundIcon size={15} />
+                    </div>
+                  )}
+                  <div
+                    className={`max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                      message.role === "user"
+                        ? "rounded-br-md bg-brand-600 text-white"
+                        : "rounded-bl-md border border-border bg-card text-foreground"
+                    }`}
+                  >
+                    {message.text}
+                    {streamingHere && (
+                      <span
+                        aria-hidden="true"
+                        className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-current align-middle"
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
-            {loading && (
+            {showTyping && (
               <div className="flex items-start gap-2">
                 <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400">
                   <UserRoundIcon size={15} />
