@@ -107,7 +107,7 @@ export default function Hero() {
           </p>
 
           {/* === Action Buttons === */}
-          <div className="flex flex-col sm:flex-row justify-center gap-4 w-full max-w-lg mx-auto">
+          <div className="mx-auto flex w-full max-w-lg flex-col justify-center gap-3 sm:max-w-3xl sm:flex-row sm:flex-wrap sm:gap-4">
             <a
               href="#projects"
               className="btn btn-primary group relative overflow-hidden"
