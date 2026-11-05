@@ -202,12 +202,12 @@ export default function PortfolioChatbot() {
   };
 
   return (
-    <div className="fixed bottom-3 right-3 z-[1500] sm:bottom-5 sm:right-5">
+    <div className="pointer-events-none fixed inset-x-0 bottom-3 z-[1500] flex flex-col items-end px-3 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:px-0">
       {open && (
         <div
           role="dialog"
           aria-label="AI assistant chat"
-          className="mb-3 flex h-[min(78dvh,620px)] max-h-[calc(100dvh-6rem)] w-[calc(100vw-1.5rem)] max-w-[390px] flex-col overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl sm:mb-4 sm:w-[390px]"
+          className="pointer-events-auto mb-3 flex h-[min(78dvh,620px)] max-h-[calc(100dvh-6rem)] w-full max-w-[390px] flex-col overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl sm:mb-4 sm:w-[390px]"
         >
           {/* Header */}
           <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-gradient-to-r from-brand-600 to-ai-600 px-4 py-3 text-white">
@@ -334,7 +334,7 @@ export default function PortfolioChatbot() {
       <button
         ref={toggleRef}
         onClick={() => (open ? closeChat() : setOpen(true))}
-        className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-brand-600 to-ai-600 text-white shadow-2xl transition-transform hover:scale-105"
+        className="group pointer-events-auto relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-brand-600 to-ai-600 text-white shadow-2xl transition-transform hover:scale-105"
         aria-label={open ? "Close chatbot" : "Open AI assistant"}
         aria-expanded={open}
       >
