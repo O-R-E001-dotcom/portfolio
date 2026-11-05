@@ -68,7 +68,7 @@ const competencyGroups = [
 
 const highlights = [
   { value: "10,000+", label: "Data points annotated", sub: "at 98% accuracy" },
-  { value: "4", label: "Flagship case studies", sub: "agents, RAG & full-stack" },
+  { value: "6", label: "Flagship case studies", sub: "agents, RAG & full-stack" },
   { value: "3", label: "Certifications", sub: "Azure AI, Gen AI, Mastercard" },
 ];
 

@@ -4,7 +4,18 @@ import toast from 'react-hot-toast';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const PROFICIENCY_OPTIONS = ['Beginner', 'Intermediate', 'Advanced'];
-const defaultCategories = ['Frontend', 'Backend', 'AI', 'Tools', 'Other'];
+const defaultCategories = [
+  'AI & Agent Engineering',
+  'RAG & Knowledge Systems',
+  'Machine Learning',
+  'Backend & APIs',
+  'Frontend',
+  'Databases & Cloud',
+  'DevOps',
+  'Languages',
+  'Tools',
+  'Other',
+];
 
 function Modal({ open, title, onClose, children }) {
   if (!open) return null;

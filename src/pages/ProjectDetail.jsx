@@ -2,7 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { ArrowLeft, ExternalLink, Github, Layers, X } from "lucide-react";
-import { normalizeItems, parseTechStack } from "../utils/projectUtils";
+import {
+  formatProjectTitle,
+  normalizeItems,
+  parseTechStack,
+} from "../utils/projectUtils";
+import { fetchJsonWithRetry } from "../utils/api";
 import ProjectCover from "../components/ProjectCover";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -39,11 +44,7 @@ export default function ProjectDetail() {
   useEffect(() => {
     let alive = true;
 
-    fetch(`${API_URL}/projects/${projectId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Unable to load project");
-        return res.json();
-      })
+    fetchJsonWithRetry(`${API_URL}/projects/${projectId}`)
       .then((data) => {
         if (!alive) return;
         setState({ projectId, status: "ready", project: data });
@@ -61,17 +62,43 @@ export default function ProjectDetail() {
   useEffect(() => {
     if (!project) return;
 
-    const previousTitle = document.title;
-    const meta = document.querySelector('meta[name="description"]');
-    const previousDescription = meta?.getAttribute("content");
+    const title = formatProjectTitle(project.title);
     const summary = (project.description || "").replace(/\s+/g, " ").trim();
+    const url = `https://portfolio-eta-flax-91.vercel.app/project/${project.id}`;
+    const meta = document.querySelector('meta[name="description"]');
+    const canonical = document.querySelector('link[rel="canonical"]');
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogDescription = document.querySelector(
+      'meta[property="og:description"]'
+    );
 
-    document.title = `${project.title} | Abolore Sanni`;
-    if (meta && summary) meta.setAttribute("content", summary.slice(0, 155));
+    const previous = {
+      title: document.title,
+      description: meta?.getAttribute("content"),
+      canonical: canonical?.getAttribute("href"),
+      ogUrl: ogUrl?.getAttribute("content"),
+      ogTitle: ogTitle?.getAttribute("content"),
+      ogDescription: ogDescription?.getAttribute("content"),
+    };
+
+    document.title = `${title} | Abolore Sanni`;
+    if (summary) {
+      meta?.setAttribute("content", summary.slice(0, 155));
+      ogDescription?.setAttribute("content", summary.slice(0, 200));
+    }
+    canonical?.setAttribute("href", url);
+    ogUrl?.setAttribute("content", url);
+    ogTitle?.setAttribute("content", `${title} | Abolore Sanni`);
 
     return () => {
-      document.title = previousTitle;
-      if (meta && previousDescription) meta.setAttribute("content", previousDescription);
+      document.title = previous.title;
+      if (previous.description) meta?.setAttribute("content", previous.description);
+      if (previous.canonical) canonical?.setAttribute("href", previous.canonical);
+      if (previous.ogUrl) ogUrl?.setAttribute("content", previous.ogUrl);
+      if (previous.ogTitle) ogTitle?.setAttribute("content", previous.ogTitle);
+      if (previous.ogDescription)
+        ogDescription?.setAttribute("content", previous.ogDescription);
     };
   }, [project]);
 
@@ -144,6 +171,8 @@ export default function ProjectDetail() {
           <ProjectCover
             project={project}
             category={primaryCategory}
+            width={1600}
+            sizes="(max-width: 768px) 100vw, 1024px"
             className="h-64 w-full md:h-96"
             imgClassName="h-64 w-full object-cover md:h-96"
           />
@@ -160,7 +189,7 @@ export default function ProjectDetail() {
             </span>
           </div>
           <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
-            {project.title}
+            {formatProjectTitle(project.title)}
           </h1>
           <p className="max-w-3xl text-lg leading-relaxed text-muted">
             {project.description}

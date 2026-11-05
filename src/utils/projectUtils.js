@@ -25,6 +25,27 @@ export const normalizeItems = (items) => {
 
 export const getProjectPath = (project) => `/project/${project.id}`;
 
+/**
+ * Normalizes the separator in project titles so every card shows the same
+ * em dash. Older database rows use ": " or " - " while newer ones use " — ".
+ */
+export const formatProjectTitle = (title = "") => {
+  const value = String(title).trim();
+  if (!value || value.includes(" — ")) return value;
+
+  const separator = value.includes(": ")
+    ? ": "
+    : value.includes(" - ")
+      ? " - "
+      : null;
+  if (!separator) return value;
+
+  const index = value.indexOf(separator);
+  const name = value.slice(0, index).trim();
+  const tagline = value.slice(index + separator.length).trim();
+  return tagline ? `${name} — ${tagline}` : name;
+};
+
 // Presentation order for the portfolio grid. New projects added through the
 // admin panel fall to the end, sorted newest first.
 const FEATURED_ORDER = [

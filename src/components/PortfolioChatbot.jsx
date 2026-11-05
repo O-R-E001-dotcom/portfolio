@@ -228,7 +228,7 @@ export default function PortfolioChatbot() {
             <button
               onClick={closeChat}
               className="shrink-0 rounded-full p-2 hover:bg-white/15 transition"
-              aria-label="Close chatbot"
+              aria-label="Close chat panel"
             >
               <X size={18} />
             </button>

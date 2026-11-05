@@ -1,4 +1,5 @@
 import { LayersIcon, NetworkIcon, ServerIcon, UserRoundIcon } from "./icons";
+import { formatProjectTitle } from "../utils/projectUtils";
 
 const GRADIENTS = [
   "from-[#1f0a2e] via-[#3b0764] to-[#172554]",
@@ -34,13 +35,44 @@ const iconFor = (category = "") => {
  * otherwise a deterministic gradient cover is generated from the title,
  * so the grid never repeats the same stock photo.
  */
-export default function ProjectCover({ project, category, imgClassName, className = "" }) {
+/**
+ * Cloudinary serves the original upload unless transforms are requested.
+ * Ask for modern formats and a capped width so cards do not download
+ * multi-megabyte PNGs.
+ */
+const transformImage = (url, width) => {
+  if (!url || !url.includes("/image/upload/")) return url;
+  if (/\/image\/upload\/(?:[^/]+\/)*f_auto/.test(url)) return url;
+  return url.replace(
+    "/image/upload/",
+    `/image/upload/f_auto,q_auto,c_limit,w_${width}/`
+  );
+};
+
+const buildSrcSet = (url) => {
+  if (!url || !url.includes("/image/upload/")) return undefined;
+  return [480, 900, 1600]
+    .map((value) => `${transformImage(url, value)} ${value}w`)
+    .join(", ");
+};
+
+export default function ProjectCover({
+  project,
+  category,
+  imgClassName,
+  className = "",
+  width = 900,
+  sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 480px",
+}) {
   if (project?.image_url) {
     return (
       <img
-        src={project.image_url}
-        alt={project.title}
+        src={transformImage(project.image_url, width)}
+        srcSet={buildSrcSet(project.image_url)}
+        sizes={sizes}
+        alt={formatProjectTitle(project.title)}
         loading="lazy"
+        decoding="async"
         className={imgClassName || "h-full w-full object-cover"}
       />
     );

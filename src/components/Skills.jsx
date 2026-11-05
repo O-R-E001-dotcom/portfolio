@@ -23,10 +23,20 @@ const CATEGORY_ORDER = [
   "DevOps",
   "Languages",
   "Tools",
-  "AI",
-  "Backend",
   "Other",
 ];
+
+// Older skill rows use short category names. Normalize them for display so the
+// grid does not show duplicate groups.
+const CATEGORY_ALIASES = {
+  AI: "AI & Agent Engineering",
+  Backend: "Backend & APIs",
+};
+
+const canonicalCategory = (category) => {
+  const value = (category || "").trim() || "Other";
+  return CATEGORY_ALIASES[value] || value;
+};
 
 const CATEGORY_ICONS = {
   "AI & Agent Engineering": Network,
@@ -38,8 +48,6 @@ const CATEGORY_ICONS = {
   DevOps: Wrench,
   Languages: Code2,
   Tools: Wrench,
-  AI: Network,
-  Backend: Server,
 };
 
 export default function Skills() {
@@ -71,12 +79,21 @@ export default function Skills() {
   }, []);
 
   const grouped = useMemo(() => {
-    const map = skills.reduce((acc, skill) => {
-      const category = skill.category || "Other";
-      acc[category] = acc[category] || [];
-      acc[category].push(skill);
-      return acc;
-    }, {});
+    const map = {};
+    const seen = {};
+
+    skills.forEach((skill) => {
+      const category = canonicalCategory(skill.category);
+      const name = (skill.name || "").trim().toLowerCase();
+      if (!name) return;
+
+      map[category] = map[category] || [];
+      seen[category] = seen[category] || new Set();
+      if (seen[category].has(name)) return;
+
+      seen[category].add(name);
+      map[category].push(skill);
+    });
 
     const ordered = {};
     CATEGORY_ORDER.forEach((category) => {

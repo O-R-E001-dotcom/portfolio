@@ -11,6 +11,7 @@ import {
   Server,
 } from "lucide-react";
 import {
+  formatProjectTitle,
   getProjectPath,
   normalizeItems,
   parseTechStack,
@@ -378,7 +379,7 @@ export default function Projects() {
                         <Link
                           to={getProjectPath(project)}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors hover:bg-brand hover:text-white dark:bg-slate-800"
-                          aria-label={`View ${project.title}`}
+                          aria-label={`View ${formatProjectTitle(project.title)}`}
                         >
                           <ArrowRight size={14} />
                         </Link>
@@ -386,7 +387,7 @@ export default function Projects() {
 
                       <Link to={getProjectPath(project)} className="block">
                         <h3 className="mb-2 text-xl font-bold text-foreground transition-colors group-hover:text-brand">
-                          {project.title}
+                          {formatProjectTitle(project.title)}
                         </h3>
                         <p className="mb-5 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
                           {project.description}
