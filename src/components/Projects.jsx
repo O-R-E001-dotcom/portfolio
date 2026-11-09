@@ -16,6 +16,7 @@ import {
   normalizeItems,
   parseTechStack,
   sortProjects,
+  splitProjectTitle,
 } from "../utils/projectUtils";
 import { readCache, writeCache } from "../utils/apiCache";
 import { fetchJsonWithRetry } from "../utils/api";
@@ -327,6 +328,7 @@ export default function Projects() {
               {filtered.map((project) => {
                 const skills = getProjectSkills(project).slice(0, isGrid ? 5 : 7);
                 const category = getProjectCategory(project);
+                const { name, tagline } = splitProjectTitle(project.title);
 
                 return (
                   <Motion.article
@@ -387,7 +389,12 @@ export default function Projects() {
 
                       <Link to={getProjectPath(project)} className="block">
                         <h3 className="mb-2 text-xl font-bold text-foreground transition-colors group-hover:text-brand">
-                          {formatProjectTitle(project.title)}
+                          <span className="block">{name}</span>
+                          {tagline && (
+                            <span className="mt-1 block text-sm font-medium leading-snug text-slate-500 transition-colors group-hover:text-brand dark:text-slate-400">
+                              {tagline}
+                            </span>
+                          )}
                         </h3>
                         <p className="mb-5 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
                           {project.description}

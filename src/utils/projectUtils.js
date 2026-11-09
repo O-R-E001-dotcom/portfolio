@@ -25,24 +25,32 @@ export const normalizeItems = (items) => {
 
 export const getProjectPath = (project) => `/project/${project.id}`;
 
+const TITLE_SEPARATORS = [" — ", ": ", " - "];
+
 /**
- * Normalizes the separator in project titles so every card shows the same
- * em dash. Older database rows use ": " or " - " while newer ones use " — ".
+ * Splits "My-TaxPal: AI Tax Compliance" into its name and tagline so the UI
+ * can place them on separate lines instead of relying on a dash separator.
  */
-export const formatProjectTitle = (title = "") => {
+export const splitProjectTitle = (title = "") => {
   const value = String(title).trim();
-  if (!value || value.includes(" — ")) return value;
+  if (!value) return { name: "", tagline: "" };
 
-  const separator = value.includes(": ")
-    ? ": "
-    : value.includes(" - ")
-      ? " - "
-      : null;
-  if (!separator) return value;
+  for (const separator of TITLE_SEPARATORS) {
+    const index = value.indexOf(separator);
+    if (index !== -1) {
+      return {
+        name: value.slice(0, index).trim(),
+        tagline: value.slice(index + separator.length).trim(),
+      };
+    }
+  }
 
-  const index = value.indexOf(separator);
-  const name = value.slice(0, index).trim();
-  const tagline = value.slice(index + separator.length).trim();
+  return { name: value, tagline: "" };
+};
+
+// Full single-line title for document titles, alt text, and aria labels.
+export const formatProjectTitle = (title = "") => {
+  const { name, tagline } = splitProjectTitle(title);
   return tagline ? `${name} — ${tagline}` : name;
 };
 

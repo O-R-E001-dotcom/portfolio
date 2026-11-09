@@ -6,6 +6,7 @@ import {
   formatProjectTitle,
   normalizeItems,
   parseTechStack,
+  splitProjectTitle,
 } from "../utils/projectUtils";
 import { fetchJsonWithRetry } from "../utils/api";
 import ProjectCover from "../components/ProjectCover";
@@ -104,6 +105,9 @@ export default function ProjectDetail() {
 
   const grouped = useMemo(() => parseTechStack(project?.tech_stack), [project]);
   const primaryCategory = Object.keys(grouped)[0] || "Project";
+  const { name: projectName, tagline: projectTagline } = splitProjectTitle(
+    project?.title
+  );
 
   if (status === "loading") {
     return (
@@ -189,7 +193,12 @@ export default function ProjectDetail() {
             </span>
           </div>
           <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
-            {formatProjectTitle(project.title)}
+            <span className="block">{projectName}</span>
+            {projectTagline && (
+              <span className="mt-2 block text-xl font-semibold leading-snug text-muted md:text-2xl">
+                {projectTagline}
+              </span>
+            )}
           </h1>
           <p className="max-w-3xl text-lg leading-relaxed text-muted">
             {project.description}
