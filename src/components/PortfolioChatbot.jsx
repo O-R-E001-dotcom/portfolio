@@ -46,7 +46,16 @@ export default function PortfolioChatbot() {
   useEffect(() => {
     let alive = true;
 
-    fetch(`${CHATBOT_API_URL}/health`)
+    // The chat service also sleeps when idle. Stop waiting quickly so the
+    // widget does not sit on "Checking availability..." for a minute; the real
+    // chat request will wake it when needed.
+    const healthSignal =
+      typeof AbortSignal !== "undefined" &&
+      typeof AbortSignal.timeout === "function"
+        ? AbortSignal.timeout(8000)
+        : undefined;
+
+    fetch(`${CHATBOT_API_URL}/health`, healthSignal ? { signal: healthSignal } : {})
       .then((response) => {
         if (!response.ok) throw new Error("Unavailable");
         return response.json();

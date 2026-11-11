@@ -8,6 +8,8 @@ import {
   parseTechStack,
   splitProjectTitle,
 } from "../utils/projectUtils";
+import { readCache } from "../utils/apiCache";
+import { findFallbackProject } from "../data/fallback";
 import { fetchJsonWithRetry } from "../utils/api";
 import ProjectCover from "../components/ProjectCover";
 
@@ -17,10 +19,20 @@ const MotionDiv = Motion.div;
 export default function ProjectDetail() {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  const [state, setState] = useState({
-    projectId,
-    status: "loading",
-    project: null,
+  const [state, setState] = useState(() => {
+    // Paint the project from cache or the bundled snapshot right away; the
+    // live request below only refreshes it.
+    const cached = readCache("projects");
+    const initial =
+      (Array.isArray(cached) &&
+        cached.find((item) => String(item.id) === String(projectId))) ||
+      findFallbackProject(projectId);
+
+    return {
+      projectId,
+      status: initial ? "ready" : "loading",
+      project: initial || null,
+    };
   });
 
   const status = state.projectId === projectId ? state.status : "loading";
@@ -52,7 +64,12 @@ export default function ProjectDetail() {
       })
       .catch(() => {
         if (!alive) return;
-        setState({ projectId, status: "error", project: null });
+        // Keep the cached or bundled project visible if revalidation fails.
+        setState((previous) =>
+          previous.projectId === projectId && previous.project
+            ? previous
+            : { projectId, status: "error", project: null }
+        );
       });
 
     return () => {

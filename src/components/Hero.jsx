@@ -5,13 +5,14 @@ import { TypeAnimation } from "react-type-animation";
 import { FaDownload, FaRegEye, FaCode } from "react-icons/fa";
 import { LayersIcon } from "./icons";
 import { readCache, writeCache } from "../utils/apiCache";
+import { FALLBACK_PROFILE } from "../data/fallback";
 import { fetchJsonWithRetry } from "../utils/api";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function Hero() {
   const [profile, setProfile] = useState(
-    () => readCache("profile") || { profile_image_url: "", cv_url: "" }
+    () => readCache("profile") || FALLBACK_PROFILE
   );
 
   useEffect(() => {

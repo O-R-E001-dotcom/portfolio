@@ -9,6 +9,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { readCache, writeCache } from "../utils/apiCache";
+import { FALLBACK_SKILLS } from "../data/fallback";
 import { fetchJsonWithRetry } from "../utils/api";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -51,9 +52,11 @@ const CATEGORY_ICONS = {
 };
 
 export default function Skills() {
-  const [skills, setSkills] = useState(() => readCache("skills") || []);
+  const [skills, setSkills] = useState(
+    () => readCache("skills") || FALLBACK_SKILLS
+  );
   const [status, setStatus] = useState(() =>
-    readCache("skills") ? "ready" : "loading"
+    (readCache("skills") || FALLBACK_SKILLS).length > 0 ? "ready" : "loading"
   );
 
   useEffect(() => {

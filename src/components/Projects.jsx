@@ -19,6 +19,7 @@ import {
   splitProjectTitle,
 } from "../utils/projectUtils";
 import { readCache, writeCache } from "../utils/apiCache";
+import { FALLBACK_PROJECTS } from "../data/fallback";
 import { fetchJsonWithRetry } from "../utils/api";
 import ProjectCover from "./ProjectCover";
 import { NetworkIcon } from "./icons";
@@ -156,11 +157,11 @@ const matchesFilter = (project, filter) => {
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [projects, setProjects] = useState(() => {
-    const cached = readCache("projects");
-    return cached ? sortProjects(cached) : [];
+    const cached = readCache("projects") || FALLBACK_PROJECTS;
+    return sortProjects(cached);
   });
   const [status, setStatus] = useState(() =>
-    readCache("projects") ? "ready" : "loading"
+    (readCache("projects") || FALLBACK_PROJECTS).length > 0 ? "ready" : "loading"
   );
   const [viewMode, setViewMode] = useState("grid");
 

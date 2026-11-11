@@ -1,0 +1,642 @@
+[
+  {
+    "category": "DevOps",
+    "name": "CI/CD",
+    "icon_name": "git",
+    "proficiency_level": "Advanced",
+    "id": 85,
+    "created_at": "2026-11-04T11:14:39"
+  },
+  {
+    "category": "DevOps",
+    "name": "GitHub Actions",
+    "icon_name": "git",
+    "proficiency_level": "Advanced",
+    "id": 84,
+    "created_at": "2026-11-04T11:14:39"
+  },
+  {
+    "category": "DevOps",
+    "name": "Docker Compose",
+    "icon_name": "docker",
+    "proficiency_level": "Advanced",
+    "id": 83,
+    "created_at": "2026-11-04T11:14:39"
+  },
+  {
+    "category": "Databases & Cloud",
+    "name": "AWS S3",
+    "icon_name": "aws",
+    "proficiency_level": "Intermediate",
+    "id": 82,
+    "created_at": "2026-11-04T11:14:38"
+  },
+  {
+    "category": "Databases & Cloud",
+    "name": "Microsoft Azure",
+    "icon_name": "azure",
+    "proficiency_level": "Beginner",
+    "id": 81,
+    "created_at": "2026-11-04T11:14:38"
+  },
+  {
+    "category": "Databases & Cloud",
+    "name": "Redis",
+    "icon_name": "database",
+    "proficiency_level": "Intermediate",
+    "id": 80,
+    "created_at": "2026-11-04T11:14:38"
+  },
+  {
+    "category": "Databases & Cloud",
+    "name": "PostgreSQL",
+    "icon_name": "postgres",
+    "proficiency_level": "Advanced",
+    "id": 79,
+    "created_at": "2026-11-04T11:14:38"
+  },
+  {
+    "category": "Machine Learning",
+    "name": "PyTorch",
+    "icon_name": "ai",
+    "proficiency_level": "Intermediate",
+    "id": 75,
+    "created_at": "2026-11-04T11:14:37"
+  },
+  {
+    "category": "Machine Learning",
+    "name": "scikit-learn",
+    "icon_name": "python",
+    "proficiency_level": "Intermediate",
+    "id": 76,
+    "created_at": "2026-11-04T11:14:37"
+  },
+  {
+    "category": "Machine Learning",
+    "name": "DistilRoBERTa",
+    "icon_name": "ai",
+    "proficiency_level": "Advanced",
+    "id": 77,
+    "created_at": "2026-11-04T11:14:37"
+  },
+  {
+    "category": "Machine Learning",
+    "name": "Emotion Classification",
+    "icon_name": "AI",
+    "proficiency_level": "Beginner",
+    "id": 78,
+    "created_at": "2026-11-04T11:14:37"
+  },
+  {
+    "category": "Frontend",
+    "name": "Vitest",
+    "icon_name": "javascript",
+    "proficiency_level": "Intermediate",
+    "id": 74,
+    "created_at": "2026-11-04T11:14:36"
+  },
+  {
+    "category": "Frontend",
+    "name": "Zustand",
+    "icon_name": "react",
+    "proficiency_level": "Intermediate",
+    "id": 73,
+    "created_at": "2026-11-04T11:14:36"
+  },
+  {
+    "category": "Frontend",
+    "name": "React Router",
+    "icon_name": "react",
+    "proficiency_level": "Advanced",
+    "id": 72,
+    "created_at": "2026-11-04T11:14:36"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "pytest",
+    "icon_name": "python",
+    "proficiency_level": "Advanced",
+    "id": 71,
+    "created_at": "2026-11-04T11:14:36"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "JWT & RBAC",
+    "icon_name": "server",
+    "proficiency_level": "Advanced",
+    "id": 70,
+    "created_at": "2026-11-04T11:14:35"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "SQLAlchemy",
+    "icon_name": "database",
+    "proficiency_level": "Advanced",
+    "id": 69,
+    "created_at": "2026-11-04T11:14:35"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "REST API Design",
+    "icon_name": "server",
+    "proficiency_level": "Advanced",
+    "id": 68,
+    "created_at": "2026-11-04T11:14:35"
+  },
+  {
+    "category": "Languages",
+    "name": "SQL",
+    "icon_name": "database",
+    "proficiency_level": "Advanced",
+    "id": 67,
+    "created_at": "2026-11-04T11:14:35"
+  },
+  {
+    "category": "Languages",
+    "name": "TypeScript",
+    "icon_name": "typescript",
+    "proficiency_level": "Advanced",
+    "id": 66,
+    "created_at": "2026-11-04T11:14:34"
+  },
+  {
+    "category": "RAG & Knowledge Systems",
+    "name": "ChromaDB",
+    "icon_name": "database",
+    "proficiency_level": "Advanced",
+    "id": 63,
+    "created_at": "2026-11-04T11:14:34"
+  },
+  {
+    "category": "RAG & Knowledge Systems",
+    "name": "Azure AI Search",
+    "icon_name": "azure",
+    "proficiency_level": "Intermediate",
+    "id": 64,
+    "created_at": "2026-11-04T11:14:34"
+  },
+  {
+    "category": "RAG & Knowledge Systems",
+    "name": "Content Grounding",
+    "icon_name": "llm",
+    "proficiency_level": "Advanced",
+    "id": 65,
+    "created_at": "2026-11-04T11:14:34"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "MCP & A2A",
+    "icon_name": "network",
+    "proficiency_level": "Intermediate",
+    "id": 62,
+    "created_at": "2026-11-04T11:14:33"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "Hugging Face Transformers",
+    "icon_name": "ai",
+    "proficiency_level": "Advanced",
+    "id": 61,
+    "created_at": "2026-11-04T11:14:33"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "Gemini API",
+    "icon_name": "ai",
+    "proficiency_level": "Advanced",
+    "id": 60,
+    "created_at": "2026-11-04T11:14:32"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "OpenAI GPT-4",
+    "icon_name": "llm",
+    "proficiency_level": "Advanced",
+    "id": 59,
+    "created_at": "2026-11-04T11:14:32"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "Azure AI Foundry",
+    "icon_name": "azure",
+    "proficiency_level": "Intermediate",
+    "id": 56,
+    "created_at": "2026-11-04T11:14:31"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "RAG Pipelines",
+    "icon_name": "llm",
+    "proficiency_level": "Advanced",
+    "id": 55,
+    "created_at": "2026-11-04T11:14:31"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "Copilot Studio",
+    "icon_name": "ai",
+    "proficiency_level": "Intermediate",
+    "id": 57,
+    "created_at": "2026-11-04T11:14:31"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "Anthropic Claude API",
+    "icon_name": "llm",
+    "proficiency_level": "Advanced",
+    "id": 58,
+    "created_at": "2026-11-04T11:14:31"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "LangChain",
+    "icon_name": "ai",
+    "proficiency_level": "Advanced",
+    "id": 54,
+    "created_at": "2026-11-04T11:14:30"
+  },
+  {
+    "category": "Tools",
+    "name": "Heroku",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 53,
+    "created_at": "2026-05-26T20:44:32"
+  },
+  {
+    "category": "Tools",
+    "name": "Google Cloud Run",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 52,
+    "created_at": "2026-05-26T20:44:20"
+  },
+  {
+    "category": "Tools",
+    "name": "Render",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 51,
+    "created_at": "2026-05-26T20:44:02"
+  },
+  {
+    "category": "Tools",
+    "name": "GitHub",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 49,
+    "created_at": "2026-05-26T20:43:18"
+  },
+  {
+    "category": "Frontend",
+    "name": "Vite",
+    "icon_name": "javascript",
+    "proficiency_level": "Advanced",
+    "id": 48,
+    "created_at": "2026-05-26T20:40:10"
+  },
+  {
+    "category": "Tools",
+    "name": "Postman",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 47,
+    "created_at": "2026-05-26T20:37:34"
+  },
+  {
+    "category": "Tools",
+    "name": "OpenAI API",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 46,
+    "created_at": "2026-05-26T20:37:18"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "AI Streaming Interfaces",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 44,
+    "created_at": "2026-05-26T20:33:13"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "AI Personalization Systems",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 43,
+    "created_at": "2026-05-26T20:31:30"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "AI Tool Calling",
+    "icon_name": "",
+    "proficiency_level": "Advanced",
+    "id": 42,
+    "created_at": "2026-05-26T20:30:58"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "AI Memory Systems",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 41,
+    "created_at": "2026-05-26T20:30:39"
+  },
+  {
+    "category": "RAG & Knowledge Systems",
+    "name": "Vector Search",
+    "icon_name": "database",
+    "proficiency_level": "Advanced",
+    "id": 40,
+    "created_at": "2026-05-26T20:30:22"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "AI Workflow Automation",
+    "icon_name": "",
+    "proficiency_level": "Advanced",
+    "id": 39,
+    "created_at": "2026-05-26T20:29:52"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "AI Agents",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 38,
+    "created_at": "2026-05-26T20:29:31"
+  },
+  {
+    "category": "Frontend",
+    "name": "Component Reusability",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 37,
+    "created_at": "2026-05-26T20:27:00"
+  },
+  {
+    "category": "Frontend",
+    "name": "API-driven UI Development",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 36,
+    "created_at": "2026-05-26T20:26:37"
+  },
+  {
+    "category": "Frontend",
+    "name": "Figma to React Conversion",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 35,
+    "created_at": "2026-05-26T20:26:13"
+  },
+  {
+    "category": "Frontend",
+    "name": "Real-time UI Updates",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 34,
+    "created_at": "2026-05-26T20:25:41"
+  },
+  {
+    "category": "Frontend",
+    "name": "Portfolio UI Engineering",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 33,
+    "created_at": "2026-05-26T20:25:04"
+  },
+  {
+    "category": "Frontend",
+    "name": "Scalable Frontend Architecture",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 32,
+    "created_at": "2026-05-26T20:23:36"
+  },
+  {
+    "category": "Frontend",
+    "name": "Responsive Design",
+    "icon_name": "",
+    "proficiency_level": "Advanced",
+    "id": 31,
+    "created_at": "2026-05-26T20:18:13"
+  },
+  {
+    "category": "Frontend",
+    "name": "REST API Integration",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 30,
+    "created_at": "2026-05-26T20:17:33"
+  },
+  {
+    "category": "Frontend",
+    "name": "Framer Motion",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 29,
+    "created_at": "2026-05-26T20:16:51"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "REST APIs",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 28,
+    "created_at": "2026-05-26T20:13:44"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "Authentication Systems",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 27,
+    "created_at": "2026-05-26T20:09:58"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "AI API Integration",
+    "icon_name": "",
+    "proficiency_level": "Advanced",
+    "id": 26,
+    "created_at": "2026-05-26T20:08:56"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "Cloud Deployment",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 25,
+    "created_at": "2026-05-26T20:08:22"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "JWT Authentication",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 24,
+    "created_at": "2026-05-26T20:07:48"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "Alembic",
+    "icon_name": "database",
+    "proficiency_level": "Intermediate",
+    "id": 23,
+    "created_at": "2026-05-26T20:03:42"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "Pydantic",
+    "icon_name": "python",
+    "proficiency_level": "Advanced",
+    "id": 22,
+    "created_at": "2026-05-26T20:03:14"
+  },
+  {
+    "category": "DevOps",
+    "name": "Docker",
+    "icon_name": "docker",
+    "proficiency_level": "Advanced",
+    "id": 21,
+    "created_at": "2026-04-28T23:09:21"
+  },
+  {
+    "category": "Databases & Cloud",
+    "name": "Supabase",
+    "icon_name": "database",
+    "proficiency_level": "Advanced",
+    "id": 20,
+    "created_at": "2026-02-03T20:22:58"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "Prompt Engineering",
+    "icon_name": "ai",
+    "proficiency_level": "Advanced",
+    "id": 19,
+    "created_at": "2026-02-03T20:22:30"
+  },
+  {
+    "category": "Tools",
+    "name": "VS Code",
+    "icon_name": "",
+    "proficiency_level": "Advanced",
+    "id": 18,
+    "created_at": "2026-02-03T20:21:12"
+  },
+  {
+    "category": "Tools",
+    "name": "Vercel",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 17,
+    "created_at": "2026-02-03T20:20:50"
+  },
+  {
+    "category": "Tools",
+    "name": "Swagger",
+    "icon_name": "",
+    "proficiency_level": "Advanced",
+    "id": 16,
+    "created_at": "2026-02-03T20:20:38"
+  },
+  {
+    "category": "Tools",
+    "name": "Git",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 15,
+    "created_at": "2026-02-03T20:20:27"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "Natural Language Processing",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 14,
+    "created_at": "2026-02-03T20:20:08"
+  },
+  {
+    "category": "Languages",
+    "name": "Python",
+    "icon_name": "python",
+    "proficiency_level": "Advanced",
+    "id": 13,
+    "created_at": "2026-02-03T20:19:35"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "MySQL",
+    "icon_name": "",
+    "proficiency_level": "Intermediate",
+    "id": 12,
+    "created_at": "2026-02-03T20:18:58"
+  },
+  {
+    "category": "Backend & APIs",
+    "name": "FastAPI",
+    "icon_name": "fastapi",
+    "proficiency_level": "Advanced",
+    "id": 11,
+    "created_at": "2026-02-03T20:17:21"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "Multi-Agent Systems",
+    "icon_name": "ai",
+    "proficiency_level": "Intermediate",
+    "id": 10,
+    "created_at": "2026-02-03T20:15:33"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "RAG",
+    "icon_name": "database",
+    "proficiency_level": "Intermediate",
+    "id": 9,
+    "created_at": "2026-02-03T20:14:55"
+  },
+  {
+    "category": "AI & Agent Engineering",
+    "name": "LangGraph",
+    "icon_name": "ai",
+    "proficiency_level": "Advanced",
+    "id": 8,
+    "created_at": "2026-02-03T20:14:34"
+  },
+  {
+    "category": "Frontend",
+    "name": "Redux / Context API",
+    "icon_name": "react",
+    "proficiency_level": "Intermediate",
+    "id": 7,
+    "created_at": "2026-02-03T20:12:45"
+  },
+  {
+    "category": "Languages",
+    "name": "Javascript",
+    "icon_name": "javascript",
+    "proficiency_level": "Advanced",
+    "id": 6,
+    "created_at": "2026-02-03T20:09:19"
+  },
+  {
+    "category": "Frontend",
+    "name": "Tailwind CSS",
+    "icon_name": "css",
+    "proficiency_level": "Advanced",
+    "id": 5,
+    "created_at": "2026-02-03T20:08:11"
+  },
+  {
+    "category": "Frontend",
+    "name": "React",
+    "icon_name": "react",
+    "proficiency_level": "Advanced",
+    "id": 4,
+    "created_at": "2026-02-03T20:04:48"
+  }
+]
